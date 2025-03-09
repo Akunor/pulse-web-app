@@ -142,23 +142,7 @@ function App() {
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <div className="flex flex-col items-end">
-                  <span className="text-sm">{user.email}</span>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs text-white/80">ID: {user.id}</span>
-                    <button
-                      onClick={copyUserId}
-                      className="p-1 hover:bg-white/10 rounded-full transition-colors"
-                      title="Copy ID"
-                    >
-                      {copied ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Copy className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
+                <span className="text-sm">{user.email}</span>
                 <button 
                   onClick={handleSignOut}
                   className="p-2 hover:bg-white/10 rounded-full transition-colors"

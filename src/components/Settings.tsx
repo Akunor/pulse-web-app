@@ -1,10 +1,26 @@
-import React from 'react';
-import { Settings as SettingsIcon, Sun, Moon, Bell } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings as SettingsIcon, Sun, Moon, Bell, Copy, Check } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import { NotificationSettings } from './NotificationSettings';
+import toast from 'react-hot-toast';
 
 export function Settings() {
   const { theme, toggleTheme } = useTheme();
+  const { user } = useAuth();
+  const [copied, setCopied] = useState(false);
+
+  const copyUserId = async () => {
+    if (!user?.id) return;
+    try {
+      await navigator.clipboard.writeText(user.id);
+      setCopied(true);
+      toast.success('User ID copied to clipboard');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast.error('Failed to copy ID');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -15,6 +31,24 @@ export function Settings() {
         </div>
 
         <div className="space-y-6">
+          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white">User ID</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">{user?.id}</p>
+            </div>
+            <button
+              onClick={copyUserId}
+              className="p-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
+              title="Copy ID"
+            >
+              {copied ? (
+                <Check className="w-5 h-5 text-green-500" />
+              ) : (
+                <Copy className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+              )}
+            </button>
+          </div>
+
           <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
             <div className="flex items-center space-x-3">
               {theme === 'dark' ? (
