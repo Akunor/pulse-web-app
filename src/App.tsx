@@ -136,9 +136,9 @@ function App() {
     <div className={`min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200`}>
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       
-      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-4">
+      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-2">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Logo className="h-16 w-auto" variant="main" />
+          <Logo className="h-20 w-auto py-1" variant="main" />
           <div className="flex items-center space-x-4">
             {user ? (
               <>
