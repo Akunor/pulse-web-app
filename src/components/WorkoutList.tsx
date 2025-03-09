@@ -109,41 +109,68 @@ export function WorkoutList() {
   }
 
   async function completeWorkout(workout: Workout) {
-    const durationInMinutes = parseInt(workout.duration);
-    if (isNaN(durationInMinutes)) {
-      toast.error('Invalid duration');
-      return;
+    try {
+      const durationInMinutes = parseInt(workout.duration);
+      if (isNaN(durationInMinutes)) {
+        toast.error('Invalid duration');
+        return;
+      }
+
+      // Log attempt details
+      console.log('Attempting to complete workout:', {
+        name: workout.name,
+        duration: durationInMinutes,
+        userId: user?.id
+      });
+
+      const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const { error: timezoneError } = await supabase
+        .from('profiles')
+        .update({ timezone: currentTimezone })
+        .eq('id', user?.id);
+
+      if (timezoneError) {
+        console.error('Timezone update error:', timezoneError);
+        // Continue with workout logging even if timezone update fails
+      }
+
+      // Calculate estimated calories (rough estimate based on duration)
+      const estimatedCalories = Math.round(durationInMinutes * 7); // Average 7 calories per minute
+
+      const workoutData = {
+        user_id: user?.id,
+        name: workout.name,
+        duration: `${durationInMinutes} minutes`,
+        calories: estimatedCalories,
+        completed_at: new Date().toISOString()
+      };
+
+      // Log the data being sent
+      console.log('Sending workout data:', workoutData);
+
+      const { data, error } = await supabase
+        .from('workouts')
+        .insert([workoutData])
+        .select();
+
+      if (error) {
+        console.error('Workout completion error:', {
+          error,
+          details: error.details,
+          hint: error.hint,
+          message: error.message
+        });
+        toast.error(`Failed to complete workout: ${error.message}`);
+        return;
+      }
+
+      console.log('Workout completed successfully:', data);
+      toast.success('Workout completed!');
+      loadWorkouts();
+    } catch (error) {
+      console.error('Unexpected error during workout completion:', error);
+      toast.error('An unexpected error occurred while completing the workout');
     }
-
-    const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    await supabase
-      .from('profiles')
-      .update({ timezone: currentTimezone })
-      .eq('id', user?.id);
-
-    // Calculate estimated calories (rough estimate based on duration)
-    const estimatedCalories = Math.round(durationInMinutes * 7); // Average 7 calories per minute
-
-    const { error } = await supabase
-      .from('workouts')
-      .insert([
-        {
-          user_id: user?.id,
-          name: workout.name,
-          duration: `${durationInMinutes} minutes`,
-          calories: estimatedCalories,
-          completed_at: new Date().toISOString()
-        }
-      ]);
-
-    if (error) {
-      console.error('Workout completion error:', error);
-      toast.error('Failed to complete workout');
-      return;
-    }
-
-    toast.success('Workout completed!');
-    loadWorkouts();
   }
 
   const handleCustomSubmit = async (e: React.FormEvent) => {
