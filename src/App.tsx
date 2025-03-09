@@ -139,7 +139,7 @@ function App() {
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Logo className="w-8 h-8 text-white" />
+            <Logo className="w-8 h-8 text-white" variant="small" />
             <h1 className="text-2xl font-bold">Pulse</h1>
           </div>
           <div className="flex items-center space-x-4">
@@ -186,7 +186,7 @@ function App() {
           renderContent()
         ) : (
           <div className="text-center py-20">
-            <Logo className="w-24 h-24 text-rose-500 mx-auto mb-8" />
+            <Logo className="w-24 h-24 text-rose-500 mx-auto mb-8" variant="main" />
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Welcome to Pulse</h2>
             <p className="text-slate-600 dark:text-slate-400 mb-8">Sign in to track your fitness journey and connect with friends</p>
             <button
@@ -206,7 +206,7 @@ function App() {
               onClick={() => setActiveTab('dashboard')}
               className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
             >
-              <Logo className="w-6 h-6" />
+              <Logo className="w-6 h-6" variant="small" />
               <span className="text-xs">Pulse</span>
             </button>
             <button 
