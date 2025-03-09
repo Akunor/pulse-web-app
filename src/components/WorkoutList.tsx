@@ -121,6 +121,9 @@ export function WorkoutList() {
       .update({ timezone: currentTimezone })
       .eq('id', user?.id);
 
+    // Calculate estimated calories (rough estimate based on duration)
+    const estimatedCalories = Math.round(durationInMinutes * 7); // Average 7 calories per minute
+
     const { error } = await supabase
       .from('workouts')
       .insert([
@@ -128,11 +131,13 @@ export function WorkoutList() {
           user_id: user?.id,
           name: workout.name,
           duration: `${durationInMinutes} minutes`,
+          calories: estimatedCalories,
           completed_at: new Date().toISOString()
         }
       ]);
 
     if (error) {
+      console.error('Workout completion error:', error);
       toast.error('Failed to complete workout');
       return;
     }
