@@ -138,9 +138,7 @@ function App() {
       
       <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <Logo className="h-8 w-auto" variant="main" />
-          </div>
+          <Logo className="h-8 w-auto" variant="main" />
           <div className="flex items-center space-x-4">
             {user ? (
               <>
