@@ -96,8 +96,8 @@ function App() {
         return <Settings />;
       default:
         return (
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8 mb-8">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8">
               <div className="flex flex-col items-center justify-center">
                 <div className="relative mb-6">
                   <div className={`absolute inset-0 rounded-full ${
@@ -125,8 +125,12 @@ function App() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <WorkoutList />
-              <FriendsList />
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
+                <WorkoutList />
+              </div>
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
+                <FriendsList />
+              </div>
             </div>
           </div>
         );
