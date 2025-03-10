@@ -207,7 +207,7 @@ export function WorkoutList() {
   const isMainPage = window.location.pathname === '/';
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mt-8">
       <div className="flex items-center space-x-2 mb-6">
         <Dumbbell className="w-6 h-6 text-rose-500" />
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Workouts</h2>

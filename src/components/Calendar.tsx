@@ -75,7 +75,7 @@ export function Calendar() {
   const emptyStartCells = Array(emptyDays).fill(null);
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mt-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Activity className="w-6 h-6 text-rose-500" />
