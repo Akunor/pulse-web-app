@@ -6,6 +6,7 @@
     - Remove unused columns from profiles table
     - Keep notification_settings table for future use
     - Update trigger function to remove pulse level cap
+    - Add INSERT policy for profiles table
 */
 
 -- Drop notification queue table
@@ -16,6 +17,12 @@ ALTER TABLE profiles
 DROP COLUMN IF EXISTS rest_day_used,
 DROP COLUMN IF EXISTS days_without_workout,
 DROP COLUMN IF EXISTS last_pulse_update;
+
+-- Add INSERT policy for profiles
+CREATE POLICY "System can create user profiles"
+  ON profiles FOR INSERT
+  TO authenticated
+  WITH CHECK (true);  -- Allow any authenticated user to have a profile created
 
 -- Update the workout trigger function to remove pulse level cap
 CREATE OR REPLACE FUNCTION update_pulse_on_workout()
