@@ -24,6 +24,7 @@ import { Logo } from './components/Logo';
 import { supabase } from './lib/supabase';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
+import { NotificationProcessor } from './components/NotificationProcessor';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -133,95 +134,98 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200`}>
-      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
-      
-      <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-2">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Logo className="h-20 w-auto py-1" variant="main" />
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <>
-                <span className="text-sm">{user.email}</span>
-                <button 
-                  onClick={handleSignOut}
+    <>
+      <NotificationProcessor />
+      <div className={`min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200`}>
+        <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+        
+        <header className="fixed top-0 left-0 right-0 z-10 bg-gradient-to-r from-rose-500 to-orange-500 text-white p-2">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <Logo className="h-20 w-auto py-1" variant="main" />
+            <div className="flex items-center space-x-4">
+              {user ? (
+                <>
+                  <span className="text-sm">{user.email}</span>
+                  <button 
+                    onClick={handleSignOut}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                  >
+                    <LogOut className="w-6 h-6" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
                   className="p-2 hover:bg-white/10 rounded-full transition-colors"
                 >
-                  <LogOut className="w-6 h-6" />
+                  <User className="w-6 h-6" />
                 </button>
-              </>
-            ) : (
+              )}
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-7xl mx-auto p-4 pt-32 pb-24">
+          {user ? (
+            renderContent()
+          ) : (
+            <div className="text-center py-20">
+              <Logo className="w-24 h-24 text-rose-500 mx-auto mb-8" variant="main" />
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Welcome to Pulse</h2>
+              <p className="text-slate-600 dark:text-slate-400 mb-8">Sign in to track your fitness journey and connect with friends</p>
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600 transition-colors"
               >
-                <User className="w-6 h-6" />
+                Get Started
               </button>
-            )}
-          </div>
-        </div>
-      </header>
+            </div>
+          )}
+        </main>
 
-      <main className="max-w-7xl mx-auto p-4 pt-32 pb-24">
-        {user ? (
-          renderContent()
-        ) : (
-          <div className="text-center py-20">
-            <Logo className="w-24 h-24 text-rose-500 mx-auto mb-8" variant="main" />
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Welcome to Pulse</h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-8">Sign in to track your fitness journey and connect with friends</p>
-            <button
-              onClick={() => setShowAuthModal(true)}
-              className="bg-rose-500 text-white py-2 px-6 rounded-lg hover:bg-rose-600 transition-colors"
-            >
-              Get Started
-            </button>
-          </div>
+        {user && (
+          <nav className="fixed bottom-0 left-0 right-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 px-4 py-2">
+            <div className="max-w-7xl mx-auto flex justify-around">
+              <button 
+                onClick={() => setActiveTab('dashboard')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <Logo className="w-6 h-6" variant="small" />
+                <span className="text-xs">Pulse</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('workouts')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'workouts' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <Dumbbell className="w-6 h-6" />
+                <span className="text-xs">Workouts</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('calendar')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'calendar' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <CalendarIcon className="w-6 h-6" />
+                <span className="text-xs">Calendar</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('progress')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'progress' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <LineChart className="w-6 h-6" />
+                <span className="text-xs">Progress</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('settings')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'settings' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <SettingsIcon className="w-6 h-6" />
+                <span className="text-xs">Settings</span>
+              </button>
+            </div>
+          </nav>
         )}
-      </main>
-
-      {user && (
-        <nav className="fixed bottom-0 left-0 right-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 px-4 py-2">
-          <div className="max-w-7xl mx-auto flex justify-around">
-            <button 
-              onClick={() => setActiveTab('dashboard')}
-              className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-            >
-              <Logo className="w-6 h-6" variant="small" />
-              <span className="text-xs">Pulse</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('workouts')}
-              className={`p-2 flex flex-col items-center ${activeTab === 'workouts' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-            >
-              <Dumbbell className="w-6 h-6" />
-              <span className="text-xs">Workouts</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('calendar')}
-              className={`p-2 flex flex-col items-center ${activeTab === 'calendar' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-            >
-              <CalendarIcon className="w-6 h-6" />
-              <span className="text-xs">Calendar</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('progress')}
-              className={`p-2 flex flex-col items-center ${activeTab === 'progress' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-            >
-              <LineChart className="w-6 h-6" />
-              <span className="text-xs">Progress</span>
-            </button>
-            <button 
-              onClick={() => setActiveTab('settings')}
-              className={`p-2 flex flex-col items-center ${activeTab === 'settings' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-            >
-              <SettingsIcon className="w-6 h-6" />
-              <span className="text-xs">Settings</span>
-            </button>
-          </div>
-        </nav>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 
