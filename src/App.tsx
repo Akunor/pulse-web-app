@@ -162,7 +162,7 @@ function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4 pt-24 pb-24">
+      <main className="max-w-7xl mx-auto p-4 pt-32 pb-24">
         {user ? (
           renderContent()
         ) : (
