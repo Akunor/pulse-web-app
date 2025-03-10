@@ -7,6 +7,7 @@
     - Keep notification_settings table for future use
     - Update trigger function to remove pulse level cap
     - Add INSERT policy for profiles table
+    - Re-create handle_new_user trigger
 */
 
 -- Drop notification queue table
@@ -18,11 +19,53 @@ DROP COLUMN IF EXISTS rest_day_used,
 DROP COLUMN IF EXISTS days_without_workout,
 DROP COLUMN IF EXISTS last_pulse_update;
 
+-- Drop existing policy if it exists
+DROP POLICY IF EXISTS "System can create user profiles" ON profiles;
+
 -- Add INSERT policy for profiles
 CREATE POLICY "System can create user profiles"
   ON profiles FOR INSERT
   TO authenticated
   WITH CHECK (true);  -- Allow any authenticated user to have a profile created
+
+-- Create a trigger function to create profiles
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (
+    id, 
+    email, 
+    pulse_level, 
+    streak_days,
+    last_workout_at,
+    timezone,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    new.id, 
+    new.email, 
+    0, 
+    0,
+    NULL,
+    'UTC',
+    now(),
+    now()
+  )
+  ON CONFLICT (id) DO UPDATE 
+  SET email = EXCLUDED.email;
+  RETURN new;
+EXCEPTION WHEN OTHERS THEN
+  RAISE LOG 'Error in handle_new_user: %', SQLERRM;
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create the trigger
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Update the workout trigger function to remove pulse level cap
 CREATE OR REPLACE FUNCTION update_pulse_on_workout()
