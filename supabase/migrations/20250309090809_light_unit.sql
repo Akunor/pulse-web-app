@@ -14,8 +14,26 @@
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, pulse_level, streak_days)
-  VALUES (new.id, new.email, 0, 0)
+  INSERT INTO public.profiles (
+    id, 
+    email, 
+    pulse_level, 
+    streak_days,
+    last_workout_at,
+    timezone,
+    created_at,
+    updated_at
+  )
+  VALUES (
+    new.id, 
+    new.email, 
+    0, 
+    0,
+    NULL,
+    'UTC',
+    now(),
+    now()
+  )
   ON CONFLICT (id) DO UPDATE 
   SET email = EXCLUDED.email;
   RETURN new;
@@ -32,8 +50,25 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- Ensure profiles exist for current users
-INSERT INTO public.profiles (id, email, pulse_level, streak_days)
-SELECT id, email, 0, 0
+INSERT INTO public.profiles (
+  id, 
+  email, 
+  pulse_level, 
+  streak_days,
+  last_workout_at,
+  timezone,
+  created_at,
+  updated_at
+)
+SELECT 
+  id, 
+  email, 
+  0, 
+  0,
+  NULL,
+  'UTC',
+  now(),
+  now()
 FROM auth.users 
 ON CONFLICT (id) DO UPDATE 
 SET email = EXCLUDED.email;
