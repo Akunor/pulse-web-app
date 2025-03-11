@@ -32,24 +32,21 @@ BEGIN
   IF config_value IS NOT NULL THEN
     INSERT INTO app_config (key, value)
     VALUES (config_key, config_value)
-    ON CONFLICT (key) DO NOTHING;
+    ON CONFLICT (key) DO UPDATE 
+    SET value = EXCLUDED.value, updated_at = now()
+    WHERE app_config.value = 'PLEASE_SET_RESEND_API_KEY_IN_ENV' 
+       OR app_config.value = 'https://pulse-fitness.app';
   END IF;
 END;
 $$;
 
--- Store configuration from environment variables
+-- Store configuration values directly
 SELECT set_config_if_not_exists(
   'resend_api_key',
-  COALESCE(
-    current_setting('app.settings.resend_api_key', true),
-    'PLEASE_SET_RESEND_API_KEY_IN_ENV'
-  )
+  'YOUR_RESEND_API_KEY_HERE'  -- Replace this with your actual Resend API key
 );
 
 SELECT set_config_if_not_exists(
   'webapp_url', 
-  COALESCE(
-    current_setting('app.settings.webapp_url', true),
-    'https://pulse-fitness.app'
-  )
+  'YOUR_WEBAPP_URL_HERE'  -- Replace this with your actual webapp URL
 ); 
