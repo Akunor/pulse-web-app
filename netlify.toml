@@ -6,8 +6,4 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["nodemailer"]
-
-[[scheduled]]
-  function = "process-notifications"
-  schedule = "* * * * *" 
+  external_node_modules = ["nodemailer"] 

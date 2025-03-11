@@ -42,8 +42,8 @@ function formatEmailContent(notification, webappUrl) {
   return content;
 }
 
-// Main handler function
-exports.handler = async function(event, context) {
+// Process notifications function
+async function processNotifications() {
   console.log('Starting notification processing...');
   
   try {
@@ -154,4 +154,33 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ error: error.message })
     };
   }
+}
+
+// Default export for Netlify scheduled function
+export default async (req) => {
+  // Log the request details
+  console.log('Function triggered:', {
+    method: req.method,
+    url: req.url
+  });
+
+  try {
+    // Parse the request body to get next_run
+    const { next_run } = await req.json();
+    console.log('Next scheduled run:', next_run);
+
+    // Process notifications
+    return processNotifications();
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message })
+    };
+  }
+};
+
+// Export schedule config
+export const config = {
+  schedule: "* * * * *"
 }; 
