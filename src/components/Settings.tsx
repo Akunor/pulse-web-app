@@ -31,24 +31,6 @@ export function Settings() {
 
       <div className="space-y-6">
         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-          <div>
-            <h3 className="font-semibold text-slate-900 dark:text-white">User ID</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">{user?.id}</p>
-          </div>
-          <button
-            onClick={copyUserId}
-            className="p-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
-            title="Copy ID"
-          >
-            {copied ? (
-              <Check className="w-5 h-5 text-green-500" />
-            ) : (
-              <Copy className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-            )}
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
           <div className="flex items-center space-x-3">
             {theme === 'dark' ? (
               <Sun className="w-5 h-5 text-rose-500" />
@@ -77,9 +59,27 @@ export function Settings() {
             />
           </button>
         </div>
-      </div>
 
-      <NotificationSettings />
+        <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+          <div>
+            <h3 className="font-semibold text-slate-900 dark:text-white">User ID</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{user?.id}</p>
+          </div>
+          <button
+            onClick={copyUserId}
+            className="p-2 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
+            title="Copy ID"
+          >
+            {copied ? (
+              <Check className="w-5 h-5 text-green-500" />
+            ) : (
+              <Copy className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+            )}
+          </button>
+        </div>
+
+        <NotificationSettings />
+      </div>
     </div>
   );
 }

@@ -3,7 +3,6 @@ import { Bell } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { testNotification, getNotificationStatus } from '../lib/notifications';
 
 interface NotificationSettings {
@@ -101,11 +100,15 @@ export function NotificationSettings(): JSX.Element {
     }
   };
 
-  // Generate time options for the select
-  const timeOptions = Array.from({ length: 24 }, (_, i) => {
-    const hour = i.toString().padStart(2, '0');
-    return `${hour}:00:00`;
-  });
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = e.target.value;
+    // Convert from HH:mm to HH:mm:00 format
+    const formattedTime = time + ':00';
+    updateSettings({ preferred_time: formattedTime });
+  };
+
+  // Convert HH:mm:ss to HH:mm for input value
+  const displayTime = settings.preferred_time.slice(0, 5);
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
@@ -132,27 +135,14 @@ export function NotificationSettings(): JSX.Element {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm text-slate-900 dark:text-white">Preferred Time</label>
-          <Select
-            value={settings.preferred_time}
-            onValueChange={(value: string) => updateSettings({ preferred_time: value })}
+          <label className="text-sm text-slate-900 dark:text-white">Preferred Time (24-hour)</label>
+          <input
+            type="time"
+            value={displayTime}
+            onChange={handleTimeChange}
             disabled={!settings.enabled}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {timeOptions.map((time) => (
-                <SelectItem key={time} value={time}>
-                  {new Date(`2000-01-01T${time}`).toLocaleTimeString([], { 
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true 
-                  })}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             You'll receive a daily reminder at this time if you haven't worked out yet.
           </p>
