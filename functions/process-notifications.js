@@ -44,18 +44,26 @@ function formatEmailContent(notification, webappUrl) {
 
 // Main handler function
 exports.handler = async function(event, context) {
+  console.log('Starting notification processing...');
+  
   try {
     // Get webapp URL from app_config
+    console.log('Fetching webapp URL from app_config...');
     const { data: configData, error: configError } = await supabase
       .from('app_config')
       .select('value')
       .eq('key', 'webapp_url')
       .single();
     
-    if (configError) throw configError;
+    if (configError) {
+      console.error('Error fetching webapp URL:', configError);
+      throw configError;
+    }
+    console.log('Webapp URL fetched:', configData.value);
     const webappUrl = configData.value;
 
     // Get unprocessed notifications
+    console.log('Fetching unprocessed notifications...');
     const { data: notifications, error: fetchError } = await supabase
       .from('notification_queue')
       .select('*')
@@ -63,21 +71,41 @@ exports.handler = async function(event, context) {
       .order('created_at', { ascending: true })
       .limit(10);
 
-    if (fetchError) throw fetchError;
+    if (fetchError) {
+      console.error('Error fetching notifications:', fetchError);
+      throw fetchError;
+    }
+    console.log(`Found ${notifications?.length || 0} unprocessed notifications`);
+
+    if (!notifications || notifications.length === 0) {
+      console.log('No notifications to process');
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'No notifications to process' })
+      };
+    }
 
     // Process each notification
     for (const notification of notifications) {
       try {
+        console.log(`Processing notification ${notification.id} for ${notification.email}...`);
+        
         // Send email
+        console.log('Sending email...');
+        const emailContent = formatEmailContent(notification, webappUrl);
+        console.log('Email content prepared:', emailContent);
+        
         await transporter.sendMail({
           from: `"Pulse Fitness" <${process.env.GMAIL_USER}>`,
           to: notification.email,
           subject: notification.subject,
-          html: formatEmailContent(notification, webappUrl)
+          html: emailContent
         });
+        console.log('Email sent successfully');
 
         // Mark as processed
-        await supabase
+        console.log('Marking notification as processed...');
+        const { error: updateError } = await supabase
           .from('notification_queue')
           .update({ 
             processed_at: new Date().toISOString(),
@@ -85,20 +113,34 @@ exports.handler = async function(event, context) {
           })
           .eq('id', notification.id);
 
+        if (updateError) {
+          console.error('Error updating notification status:', updateError);
+          throw updateError;
+        }
+        console.log('Notification marked as processed');
+
         // Small delay to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error) {
+        console.error(`Error processing notification ${notification.id}:`, error);
+        
         // Update notification with error
-        await supabase
-          .from('notification_queue')
-          .update({ 
-            processed_at: new Date().toISOString(),
-            error: error.message
-          })
-          .eq('id', notification.id);
+        try {
+          await supabase
+            .from('notification_queue')
+            .update({ 
+              processed_at: new Date().toISOString(),
+              error: error.message
+            })
+            .eq('id', notification.id);
+          console.log('Error status recorded in database');
+        } catch (updateError) {
+          console.error('Error updating notification with error status:', updateError);
+        }
       }
     }
 
+    console.log('Notification processing completed');
     return {
       statusCode: 200,
       body: JSON.stringify({ 
@@ -106,6 +148,7 @@ exports.handler = async function(event, context) {
       })
     };
   } catch (error) {
+    console.error('Fatal error in notification processing:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message })
