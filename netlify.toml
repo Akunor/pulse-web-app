@@ -1,0 +1,12 @@
+[build]
+  functions = "functions"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[scheduled]]
+  function = "process-notifications"
+  schedule = "*/1 * * * *" 
