@@ -213,7 +213,7 @@ export function WorkoutList() {
         <h2 className="text-xl font-bold text-slate-900 dark:text-white">Workouts</h2>
       </div>
 
-      <div id="all-workouts" className="space-y-4 mb-8">
+      <div id="all-workouts" className="space-y-4">
         {defaultWorkouts.map((workout) => (
           <div
             key={workout.id}
