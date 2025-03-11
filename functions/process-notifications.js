@@ -11,7 +11,7 @@ const supabase = createClient(
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'notifications.pulse.app@gmail.com',
+    user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD
   }
 });
@@ -70,7 +70,7 @@ exports.handler = async function(event, context) {
       try {
         // Send email
         await transporter.sendMail({
-          from: '"Pulse Fitness" <notifications.pulse.app@gmail.com>',
+          from: `"Pulse Fitness" <${process.env.GMAIL_USER}>`,
           to: notification.email,
           subject: notification.subject,
           html: formatEmailContent(notification, webappUrl)

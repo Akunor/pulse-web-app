@@ -1,3 +1,7 @@
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can insert their own notifications" ON notification_queue;
+DROP POLICY IF EXISTS "Users can read their own notifications" ON notification_queue;
+
 -- Create notification queue table if it doesn't exist
 CREATE TABLE IF NOT EXISTS notification_queue (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
