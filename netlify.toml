@@ -6,4 +6,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["nodemailer"] 
+  external_node_modules = ["nodemailer"]
+
+[build.environment]
+  NODE_VERSION = "18" 
