@@ -24,7 +24,6 @@ import { Logo } from './components/Logo';
 import { supabase } from './lib/supabase';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
-import { NotificationProcessor } from './components/NotificationProcessor';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -139,7 +138,6 @@ function App() {
 
   return (
     <>
-      <NotificationProcessor />
       <div className={`min-h-screen bg-gray-50 dark:bg-slate-900 transition-colors duration-200`}>
         <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
         
