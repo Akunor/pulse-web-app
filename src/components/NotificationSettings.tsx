@@ -3,118 +3,109 @@ import { Bell } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { testNotification, getNotificationStatus } from '../lib/notifications';
 
-interface NotificationPreferences {
+interface NotificationSettings {
   preferred_time: string;
-  timezone: string;
-  is_enabled: boolean;
+  enabled: boolean;
 }
 
-export function NotificationSettings() {
-  const [preferences, setPreferences] = useState<NotificationPreferences>({
-    preferred_time: '09:00:00',
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    is_enabled: true
-  });
-  const [loading, setLoading] = useState(true);
+interface NotificationStatus {
+  success: boolean;
+  settings?: NotificationSettings;
+  pendingNotifications?: Array<{
+    id: string;
+    user_id: string;
+    email: string;
+    subject: string;
+    processed_at: string | null;
+  }>;
+  message?: string;
+}
+
+export function NotificationSettings(): JSX.Element {
   const { user } = useAuth();
-
-  // Generate time options for the select dropdown (30-minute intervals)
-  const timeOptions = Array.from({ length: 48 }, (_, i) => {
-    const hour = Math.floor(i / 2);
-    const minute = (i % 2) * 30;
-    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
-    return {
-      value: time,
-      label: new Date(`2000-01-01T${time}`).toLocaleTimeString([], { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
-      }),
-    };
+  const [settings, setSettings] = useState<NotificationSettings>({
+    preferred_time: '12:00:00',
+    enabled: true
   });
-
-  // Get all available timezones
-  const timezones = Intl.supportedValuesOf('timeZone');
+  const [testing, setTesting] = useState(false);
 
   useEffect(() => {
     if (user) {
-      loadPreferences();
+      loadSettings();
     }
   }, [user]);
 
-  async function loadPreferences() {
+  const loadSettings = async () => {
     try {
-      setLoading(true);
       const { data, error } = await supabase
-        .from('notification_preferences')
-        .select('preferred_time, timezone, is_enabled')
+        .from('notification_settings')
+        .select('*')
         .eq('user_id', user?.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading preferences:', error);
-        toast.error('Failed to load notification preferences');
-        return;
-      }
+      if (error) throw error;
 
       if (data) {
-        setPreferences({
+        setSettings({
           preferred_time: data.preferred_time,
-          timezone: data.timezone,
-          is_enabled: data.is_enabled
+          enabled: data.enabled
         });
       }
-    } catch (error) {
-      console.error('Error in loadPreferences:', error);
-      toast.error('An error occurred while loading preferences');
-    } finally {
-      setLoading(false);
+    } catch (error: unknown) {
+      console.error('Error loading notification settings:', error);
+      toast.error('Failed to load notification settings');
     }
-  }
+  };
 
-  async function updatePreferences(updates: Partial<NotificationPreferences>) {
+  const updateSettings = async (updates: Partial<NotificationSettings>) => {
     try {
-      const newPreferences = { ...preferences, ...updates };
-      
       const { error } = await supabase
-        .from('notification_preferences')
-        .update({
-          preferred_time: newPreferences.preferred_time,
-          timezone: newPreferences.timezone,
-          is_enabled: newPreferences.is_enabled,
-          updated_at: new Date().toISOString()
-        })
+        .from('notification_settings')
+        .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('user_id', user?.id);
 
-      if (error) {
-        console.error('Error updating preferences:', error);
-        toast.error('Failed to update notification preferences');
-        return;
-      }
+      if (error) throw error;
 
-      setPreferences(newPreferences);
-      toast.success('Preferences updated successfully');
-    } catch (error) {
-      console.error('Error in updatePreferences:', error);
-      toast.error('An error occurred while updating preferences');
+      setSettings((prev: NotificationSettings) => ({ ...prev, ...updates }));
+      toast.success('Notification settings updated');
+    } catch (error: unknown) {
+      console.error('Error updating notification settings:', error);
+      toast.error('Failed to update notification settings');
     }
-  }
+  };
 
-  if (loading) {
-    return (
-      <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
-        <div className="flex items-center space-x-2 mb-6">
-          <Bell className="w-6 h-6 text-rose-500" />
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Notification Settings</h2>
-        </div>
-        <div className="flex items-center justify-center h-32">
-          <div className="animate-pulse text-slate-400">Loading preferences...</div>
-        </div>
-      </div>
-    );
-  }
+  const handleTestNotification = async () => {
+    if (!user) return;
+    setTesting(true);
+    try {
+      const result = await testNotification(user.id);
+      if (result.success) {
+        toast.success('Test notification queued successfully');
+        // Check notification status after a short delay
+        setTimeout(async () => {
+          const status: NotificationStatus = await getNotificationStatus(user.id);
+          if (status.success && status.pendingNotifications && status.pendingNotifications.length > 0) {
+            toast.success('Notification is in queue and will be processed soon');
+          }
+        }, 2000);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      toast.error('Failed to send test notification');
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  // Generate time options for the select
+  const timeOptions = Array.from({ length: 24 }, (_, i) => {
+    const hour = i.toString().padStart(2, '0');
+    return `${hour}:00:00`;
+  });
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
@@ -127,62 +118,60 @@ export function NotificationSettings() {
         <div className="flex items-center justify-between">
           <label className="text-slate-900 dark:text-white">Enable Daily Reminders</label>
           <button
-            onClick={() => updatePreferences({ is_enabled: !preferences.is_enabled })}
+            onClick={() => updateSettings({ enabled: !settings.enabled })}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              preferences.is_enabled ? 'bg-rose-500' : 'bg-slate-300 dark:bg-slate-600'
+              settings.enabled ? 'bg-rose-500' : 'bg-slate-300 dark:bg-slate-600'
             }`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                preferences.is_enabled ? 'translate-x-6' : 'translate-x-1'
+                settings.enabled ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-slate-900 dark:text-white">Preferred Time</label>
+          <label className="text-sm text-slate-900 dark:text-white">Preferred Time</label>
           <Select
-            value={preferences.preferred_time}
-            onValueChange={(value) => updatePreferences({ preferred_time: value })}
-            disabled={!preferences.is_enabled}
+            value={settings.preferred_time}
+            onValueChange={(value: string) => updateSettings({ preferred_time: value })}
+            disabled={!settings.enabled}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {timeOptions.map((time) => (
-                <SelectItem key={time.value} value={time.value}>
-                  {time.label}
+                <SelectItem key={time} value={time}>
+                  {new Date(`2000-01-01T${time}`).toLocaleTimeString([], { 
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true 
+                  })}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             You'll receive a daily reminder at this time if you haven't worked out yet.
           </p>
         </div>
 
-        <div className="space-y-2">
-          <label className="block text-slate-900 dark:text-white">Time Zone</label>
-          <Select
-            value={preferences.timezone}
-            onValueChange={(value) => updatePreferences({ timezone: value })}
-            disabled={!preferences.is_enabled}
+        <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+          <button
+            onClick={handleTestNotification}
+            disabled={!settings.enabled || testing}
+            className={`w-full py-2 px-4 rounded-lg text-white transition-colors ${
+              settings.enabled && !testing
+                ? 'bg-rose-500 hover:bg-rose-600'
+                : 'bg-slate-300 dark:bg-slate-600 cursor-not-allowed'
+            }`}
           >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {timezones.map((zone) => (
-                <SelectItem key={zone} value={zone}>
-                  {zone}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Make sure your time zone is correct to receive notifications at the right time.
+            {testing ? 'Sending...' : 'Send Test Notification'}
+          </button>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+            Send a test notification to verify your settings.
           </p>
         </div>
       </div>
