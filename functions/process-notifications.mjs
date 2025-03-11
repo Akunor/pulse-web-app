@@ -18,27 +18,106 @@ const transporter = nodemailer.createTransport({
 
 // Helper to format email content
 function formatEmailContent(notification, webappUrl) {
+  const baseStyle = `
+    <style>
+      .email-container {
+        font-family: 'Arial', sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .content {
+        line-height: 1.6;
+        color: #333333;
+      }
+      .cta-button {
+        display: inline-block;
+        background-color: #6366F1;
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #666666;
+        text-align: center;
+      }
+      .emoji {
+        font-size: 24px;
+      }
+    </style>
+  `;
+
+  let content;
   if (notification.is_new_user) {
-    return `
-      <p>Welcome to Pulse Fitness! 🎉</p>
-      <p>We're excited to have you join our community. Get started by setting up your profile and tracking your first workout.</p>
-      <p><a href="${webappUrl}">Visit Pulse Fitness</a></p>
+    content = `
+      ${baseStyle}
+      <div class="email-container">
+        <div class="header">
+          <h1>Welcome to Pulse Fitness! <span class="emoji">🎉</span></h1>
+        </div>
+        <div class="content">
+          <p>We're excited to have you join our community!</p>
+          <p>Get started by setting up your profile and tracking your first workout. Your fitness journey begins here.</p>
+          <center>
+            <a href="${webappUrl}" class="cta-button">Visit Pulse Fitness</a>
+          </center>
+        </div>
+        <div class="footer">
+          <p>This email was sent by Pulse Fitness. To unsubscribe, update your notification settings in the app.</p>
+        </div>
+      </div>
+    `;
+  } else {
+    const emoji = notification.has_worked_out ? '💪' : '🏃‍♂️';
+    const title = notification.has_worked_out ? 'Great Work Today!' : 'Time to Get Moving!';
+    
+    let mainMessage;
+    if (notification.has_worked_out) {
+      mainMessage = `
+        <p>Awesome job on completing your workout! <span class="emoji">🎯</span></p>
+        <p>Your current Pulse level is <strong>${notification.pulse_level}</strong>. Keep up the momentum!</p>
+      `;
+    } else {
+      mainMessage = `
+        <p>Don't forget to get your workout in today!</p>
+        ${notification.active_users > 0 ? 
+          `<p><strong>${notification.active_users}</strong> of your friends have already worked out today. Time to join them! <span class="emoji">💫</span></p>` 
+          : '<p>Be the first to work out today and inspire others! <span class="emoji">✨</span></p>'}
+      `;
+    }
+
+    content = `
+      ${baseStyle}
+      <div class="email-container">
+        <div class="header">
+          <h1>${title} <span class="emoji">${emoji}</span></h1>
+        </div>
+        <div class="content">
+          ${mainMessage}
+          <center>
+            <a href="${webappUrl}" class="cta-button">Log your workout now</a>
+          </center>
+        </div>
+        <div class="footer">
+          <p>This email was sent by Pulse Fitness. To unsubscribe, update your notification settings in the app.</p>
+        </div>
+      </div>
     `;
   }
-
-  let content = '<p>Hey there! 👋</p>';
   
-  if (notification.has_worked_out) {
-    content += `<p>Great job on working out today! 💪 Your current Pulse level is ${notification.pulse_level}.</p>`;
-  } else {
-    content += '<p>Don\'t forget to get your workout in today! ';
-    if (notification.active_users > 0) {
-      content += `${notification.active_users} of your friends have already worked out today. `;
-    }
-    content += 'Keep your streak going!</p>';
-  }
-  
-  content += `<p><a href="${webappUrl}">Log your workout now</a></p>`;
   return content;
 }
 

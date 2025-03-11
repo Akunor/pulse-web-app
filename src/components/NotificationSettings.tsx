@@ -3,24 +3,10 @@ import { Bell } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
-import { testNotification, getNotificationStatus } from '../lib/notifications';
 
 interface NotificationSettings {
   preferred_time: string;
   enabled: boolean;
-}
-
-interface NotificationStatus {
-  success: boolean;
-  settings?: NotificationSettings;
-  pendingNotifications?: Array<{
-    id: string;
-    user_id: string;
-    email: string;
-    subject: string;
-    processed_at: string | null;
-  }>;
-  message?: string;
 }
 
 export function NotificationSettings(): JSX.Element {
@@ -29,7 +15,6 @@ export function NotificationSettings(): JSX.Element {
     preferred_time: '12:00:00',
     enabled: true
   });
-  const [testing, setTesting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -73,30 +58,6 @@ export function NotificationSettings(): JSX.Element {
     } catch (error: unknown) {
       console.error('Error updating notification settings:', error);
       toast.error('Failed to update notification settings');
-    }
-  };
-
-  const handleTestNotification = async () => {
-    if (!user) return;
-    setTesting(true);
-    try {
-      const result = await testNotification(user.id);
-      if (result.success) {
-        toast.success('Test notification queued successfully');
-        // Check notification status after a short delay
-        setTimeout(async () => {
-          const status: NotificationStatus = await getNotificationStatus(user.id);
-          if (status.success && status.pendingNotifications && status.pendingNotifications.length > 0) {
-            toast.success('Notification is in queue and will be processed soon');
-          }
-        }, 2000);
-      } else {
-        toast.error(result.message);
-      }
-    } catch (error) {
-      toast.error('Failed to send test notification');
-    } finally {
-      setTesting(false);
     }
   };
 
@@ -145,23 +106,6 @@ export function NotificationSettings(): JSX.Element {
           />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             You'll receive a daily reminder at this time if you haven't worked out yet.
-          </p>
-        </div>
-
-        <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-          <button
-            onClick={handleTestNotification}
-            disabled={!settings.enabled || testing}
-            className={`w-full py-2 px-4 rounded-lg text-white transition-colors ${
-              settings.enabled && !testing
-                ? 'bg-rose-500 hover:bg-rose-600'
-                : 'bg-slate-300 dark:bg-slate-600 cursor-not-allowed'
-            }`}
-          >
-            {testing ? 'Sending...' : 'Send Test Notification'}
-          </button>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-            Send a test notification to verify your settings.
           </p>
         </div>
       </div>
