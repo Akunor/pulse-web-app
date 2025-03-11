@@ -79,10 +79,10 @@ async function processNotifications() {
 
     if (!notifications || notifications.length === 0) {
       console.log('No notifications to process');
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'No notifications to process' })
-      };
+      return new Response(JSON.stringify({ message: 'No notifications to process' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     // Process each notification
@@ -141,18 +141,18 @@ async function processNotifications() {
     }
 
     console.log('Notification processing completed');
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ 
-        message: `Processed ${notifications.length} notifications`
-      })
-    };
+    return new Response(JSON.stringify({ 
+      message: `Processed ${notifications.length} notifications`
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (error) {
     console.error('Fatal error in notification processing:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
 
@@ -173,14 +173,14 @@ export default async (req) => {
     return processNotifications();
   } catch (error) {
     console.error('Error processing request:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };
 
 // Export schedule config
 export const config = {
-  schedule: "* * * * *"
+  schedule: "*/5 * * * *"
 }; 
