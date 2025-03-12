@@ -102,7 +102,7 @@ export function NotificationSettings(): JSX.Element {
             value={displayTime}
             onChange={handleTimeChange}
             disabled={!settings.enabled}
-            className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-rose-500 dark:text-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-500 disabled:opacity-50 disabled:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:text-rose-500 dark:[&::-webkit-calendar-picker-indicator]:text-rose-400 [&::-webkit-calendar-picker-indicator]:filter-[&::-webkit-calendar-picker-indicator]:invert-[0.4] dark:[&::-webkit-calendar-picker-indicator]:invert-[0.7]"
           />
           <p className="text-sm text-slate-500 dark:text-slate-400">
             You'll receive a daily reminder at this time if you haven't worked out yet.

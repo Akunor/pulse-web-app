@@ -27,24 +27,38 @@ function formatEmailContent(notification, webappUrl) {
         padding: 20px;
         background-color: #ffffff;
         border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
       .header {
         text-align: center;
         margin-bottom: 30px;
+        background: linear-gradient(135deg, #F43F5E, #EC4899);
+        margin: -20px -20px 30px -20px;
+        padding: 30px 20px;
+        border-radius: 8px 8px 0 0;
+      }
+      .header h1 {
+        color: #ffffff;
+        margin: 0;
+        font-size: 24px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       .content {
         line-height: 1.6;
         color: #333333;
+        padding: 0 20px;
       }
       .cta-button {
         display: inline-block;
-        background-color: #6366F1;
-        color: white;
+        background: linear-gradient(135deg, #F43F5E, #EC4899);
+        color: #ffffff;
         padding: 12px 24px;
         text-decoration: none;
         border-radius: 6px;
         margin-top: 20px;
         font-weight: bold;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
       }
       .footer {
         margin-top: 30px;
@@ -56,6 +70,12 @@ function formatEmailContent(notification, webappUrl) {
       }
       .emoji {
         font-size: 24px;
+        vertical-align: middle;
+        margin: 0 4px;
+      }
+      .highlight {
+        color: #F43F5E;
+        font-weight: bold;
       }
     </style>
   `;
@@ -83,18 +103,19 @@ function formatEmailContent(notification, webappUrl) {
   } else {
     const emoji = notification.has_worked_out ? '💪' : '🏃‍♂️';
     const title = notification.has_worked_out ? 'Great Work Today!' : 'Time to Get Moving!';
+    const buttonText = notification.has_worked_out ? 'Check your Pulse dashboard' : 'Log your workout now';
     
     let mainMessage;
     if (notification.has_worked_out) {
       mainMessage = `
         <p>Awesome job on completing your workout! <span class="emoji">🎯</span></p>
-        <p>Your current Pulse level is <strong>${notification.pulse_level}</strong>. Keep up the momentum!</p>
+        <p>Your current Pulse level is <span class="highlight">${notification.pulse_level}</span>. Keep up the momentum!</p>
       `;
     } else {
       mainMessage = `
         <p>Don't forget to get your workout in today!</p>
         ${notification.active_users > 0 ? 
-          `<p><strong>${notification.active_users}</strong> of your friends have already worked out today. Time to join them! <span class="emoji">💫</span></p>` 
+          `<p><span class="highlight">${notification.active_users}</span> of your friends have already worked out today. Time to join them! <span class="emoji">💫</span></p>` 
           : '<p>Be the first to work out today and inspire others! <span class="emoji">✨</span></p>'}
       `;
     }
@@ -108,7 +129,7 @@ function formatEmailContent(notification, webappUrl) {
         <div class="content">
           ${mainMessage}
           <center>
-            <a href="${webappUrl}" class="cta-button">Log your workout now</a>
+            <a href="${webappUrl}" class="cta-button">${buttonText}</a>
           </center>
         </div>
         <div class="footer">
