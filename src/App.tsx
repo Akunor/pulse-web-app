@@ -9,7 +9,9 @@ import {
   LogOut,
   Copy,
   Check,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -30,7 +32,9 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [userProfile, setUserProfile] = useState({
     pulseLevel: 0,
-    lastWorkout: null
+    lastWorkout: null,
+    restDayUsed: false,
+    lastRestDay: null
   });
   const [copied, setCopied] = useState(false);
   const { user, signOut } = useAuth();
@@ -44,7 +48,7 @@ function App() {
   async function loadUserProfile() {
     const { data, error } = await supabase
       .from('profiles')
-      .select('pulse_level, last_workout_at')
+      .select('pulse_level, last_workout_at, rest_day_used, last_rest_day')
       .eq('id', user?.id)
       .single();
 
@@ -55,7 +59,9 @@ function App() {
 
     setUserProfile({
       pulseLevel: data.pulse_level || 0,
-      lastWorkout: data.last_workout_at
+      lastWorkout: data.last_workout_at,
+      restDayUsed: data.rest_day_used || false,
+      lastRestDay: data.last_rest_day
     });
   }
 
@@ -115,6 +121,35 @@ function App() {
                     ? "You've worked out today! Keep the momentum going!" 
                     : "Complete a workout to increase your Pulse"}
                 </p>
+                
+                <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6 w-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Rest Day Status</h3>
+                    <div className="flex items-center gap-2">
+                      {userProfile.restDayUsed ? (
+                        <>
+                          <AlertCircle className="w-5 h-5 text-rose-500" />
+                          <span className="text-sm font-medium text-rose-500">Used</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="w-5 h-5 text-sky-500" />
+                          <span className="text-sm font-medium text-sky-500">Available</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {userProfile.restDayUsed 
+                      ? "You've used your rest day. Your Pulse will start decreasing if you don't work out today."
+                      : "You have a free rest day available. Use it wisely to maintain your Pulse level without working out."}
+                  </p>
+                  {userProfile.lastRestDay && (
+                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+                      Last rest day used: {format(new Date(userProfile.lastRestDay), 'MMM d, yyyy')}
+                    </p>
+                  )}
+                </div>
                 
                 <div className="w-full">
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Last 7 Days</h3>
