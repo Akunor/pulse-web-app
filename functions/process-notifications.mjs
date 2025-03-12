@@ -21,18 +21,17 @@ function formatEmailContent(notification, webappUrl) {
   const baseStyle = `
     <style>
       .email-container {
-        font-family: 'Arial', sans-serif;
+        font-family: Arial, sans-serif;
         max-width: 600px;
         margin: 0 auto;
         padding: 20px;
         background-color: #ffffff;
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
       .header {
         text-align: center;
         margin-bottom: 30px;
-        background: linear-gradient(135deg, #F43F5E, #EC4899);
+        background-color: #F43F5E;
         margin: -20px -20px 30px -20px;
         padding: 30px 20px;
         border-radius: 8px 8px 0 0;
@@ -41,7 +40,6 @@ function formatEmailContent(notification, webappUrl) {
         color: #ffffff;
         margin: 0;
         font-size: 24px;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       .content {
         line-height: 1.6;
@@ -51,24 +49,22 @@ function formatEmailContent(notification, webappUrl) {
       }
       .content p {
         color: #333333;
-        margin: 1em 0;
+        margin: 16px 0;
       }
       .cta-button {
         display: inline-block;
-        background: linear-gradient(135deg, #F43F5E, #EC4899);
+        background-color: #F43F5E;
         color: #ffffff !important;
         padding: 12px 24px;
         text-decoration: none;
         border-radius: 6px;
         margin-top: 20px;
         font-weight: bold;
-        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
       }
       .footer {
         margin-top: 30px;
         padding-top: 20px;
-        border-top: 1px solid #eee;
+        border-top: 1px solid #eeeeee;
         font-size: 12px;
         color: #666666;
         text-align: center;
@@ -78,7 +74,7 @@ function formatEmailContent(notification, webappUrl) {
         color: #666666;
       }
       .emoji {
-        font-size: 24px;
+        font-size: 20px;
         vertical-align: middle;
         margin: 0 4px;
       }
@@ -98,11 +94,11 @@ function formatEmailContent(notification, webappUrl) {
       }
       /* Style for active users section */
       .active-users {
-        background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(236, 72, 153, 0.1));
+        background-color: #FFF1F2;
         padding: 15px;
         border-radius: 8px;
         margin: 20px 0;
-        border: 1px solid rgba(244, 63, 94, 0.2);
+        border: 1px solid #F43F5E;
       }
       .active-users p {
         color: #333333;
