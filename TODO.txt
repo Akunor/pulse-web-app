@@ -1,0 +1,47 @@
+# Pulse Web App - TODO List
+
+## Current Issues
+- queue_user_notifications() is reading 'active_users' from all profiles and not just friends.
+- Migrations folder is clogged with unnecessary code.
+
+## Planned Features
+✓ Switch to a dedicated email
+- Personalise decay aggression 
+✓ Adapt emails for mobile and dark mode compatibility
+- Send photos to friends system (BeReal-like system)
+- Incorporate Apple Watch features 
+- Exercise tracking with minimum requirements for pulse updates
+- Badges for exercise achievements
+- Friends can prompt each other with snarky messages
+- Geo location
+    - See how long people have been at their exercise location/home, prompt to get started exercising if they are in one place for a long time?
+- During the gym downtime between sets provide games? encourage friends? scroll posts? etc...
+- Integration with Superapps like WeChat and other existing social media platforms.
+- Target weekend running clubs... 
+- See where your friends are exercising
+- Tag people you are exercising with
+- Pokemon Go style check your map to see exercise options around you and records/what people have done it recently
+    - See hotspots to exercise???
+- Pie chart to show contribution from different exercise types/routines
+- uizard.com?
+- Adaptive notifications that track common workout times.
+
+## Bug Fixes
+✓ Fix friends feature formatting - DONE
+✓ Fix decay to not lose Pulse if they exercised on a day but there was a larger rest break (i.e. Update last workout date before updating the Pulse) - DONE
+
+## Improvements
+✓ Friends features - DONE
+✓ Friends feature in notifications - DONE
+✓ Previous week's activity tracking (different colour coding) - DONE
+✓ Port to web app (Next.js and deploy on Vercel) - DONE
+✓ Notification heart picture with colour changing - DONE
+✓ Timezone adjustment - DONE
+
+## Notes
+- Use this file to track features, bugs, and improvements
+- This file won't affect the build process
+- Format:
+  ✓ = Completed
+  - = To Do
+  * = In Progress

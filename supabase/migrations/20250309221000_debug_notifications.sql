@@ -105,7 +105,7 @@ BEGIN
         user_record.id,
         user_record.email,
         'Your Daily Pulse Update',
-        user_record.last_workout_at > NOW() - INTERVAL '24 hours',
+        COALESCE(user_record.last_workout_at > NOW() - INTERVAL '24 hours', false),
         user_record.pulse_level,
         to_jsonb(user_record.active_user_count),
         user_record.streak_days
