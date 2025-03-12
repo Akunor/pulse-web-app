@@ -169,3 +169,93 @@ SELECT cron.schedule(
   '0 * * * *',          -- run at the start of every hour
   'SELECT decay_pulse_levels()'
 );
+
+-- Function to queue notifications
+CREATE OR REPLACE FUNCTION queue_user_notifications()
+RETURNS void AS $$
+DECLARE
+  user_record RECORD;
+  user_local_time timestamp with time zone;
+  debug_info text;
+BEGIN
+  -- Debug: Log function start
+  RAISE NOTICE 'Starting queue_user_notifications()';
+  
+  -- Loop through users with notifications enabled, joining with notification_settings
+  FOR user_record IN 
+    SELECT 
+      p.id,
+      p.email,
+      p.timezone,
+      p.pulse_level,
+      p.last_workout_at,
+      ns.preferred_time,
+      (SELECT COUNT(*) FROM profiles WHERE last_workout_at > NOW() - INTERVAL '24 hours') as active_users
+    FROM profiles p
+    JOIN notification_settings ns ON ns.user_id = p.id
+    WHERE ns.enabled = true
+  LOOP
+    -- Debug: Log user being processed
+    RAISE NOTICE 'Processing user: %, timezone: %, preferred_time: %', 
+      user_record.email, 
+      user_record.timezone, 
+      user_record.preferred_time;
+    
+    -- Get user's local time
+    user_local_time := NOW() AT TIME ZONE COALESCE(user_record.timezone, 'UTC');
+    
+    -- Debug: Log time comparisons
+    RAISE NOTICE 'User local time: %, Hour: %, Minute: %, Preferred Hour: %', 
+      user_local_time,
+      EXTRACT(HOUR FROM user_local_time),
+      EXTRACT(MINUTE FROM user_local_time),
+      EXTRACT(HOUR FROM user_record.preferred_time);
+    
+    -- Check if it's notification time for this user
+    IF EXTRACT(HOUR FROM user_local_time) = EXTRACT(HOUR FROM user_record.preferred_time)
+       AND EXTRACT(MINUTE FROM user_local_time) BETWEEN 0 AND 4 THEN
+      
+      -- Debug: Log notification attempt
+      RAISE NOTICE 'Attempting to queue notification for user: %', user_record.email;
+      
+      -- Insert notification into queue if not already queued for today
+      INSERT INTO notification_queue (
+        user_id,
+        email,
+        subject,
+        has_worked_out,
+        pulse_level,
+        active_users
+      )
+      SELECT
+        user_record.id,
+        user_record.email,
+        'Your Daily Pulse Update',
+        user_record.last_workout_at > NOW() - INTERVAL '24 hours',
+        user_record.pulse_level,
+        user_record.active_users
+      WHERE NOT EXISTS (
+        SELECT 1 FROM notification_queue
+        WHERE user_id = user_record.id
+        AND DATE(created_at) = CURRENT_DATE
+      );
+      
+      -- Debug: Log if notification was queued
+      IF FOUND THEN
+        RAISE NOTICE 'Successfully queued notification for user: %', user_record.email;
+      ELSE
+        RAISE NOTICE 'Did not queue notification for user: % (possibly duplicate)', user_record.email;
+      END IF;
+    ELSE
+      -- Debug: Log why notification was not sent
+      RAISE NOTICE 'Not notification time for user: % (Hour match: %, Minute in range: %)',
+        user_record.email,
+        EXTRACT(HOUR FROM user_local_time) = EXTRACT(HOUR FROM user_record.preferred_time),
+        EXTRACT(MINUTE FROM user_local_time) BETWEEN 0 AND 4;
+    END IF;
+  END LOOP;
+  
+  -- Debug: Log function end
+  RAISE NOTICE 'Finished queue_user_notifications()';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

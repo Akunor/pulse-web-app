@@ -47,11 +47,16 @@ function formatEmailContent(notification, webappUrl) {
         line-height: 1.6;
         color: #333333;
         padding: 0 20px;
+        background-color: #ffffff;
+      }
+      .content p {
+        color: #333333;
+        margin: 1em 0;
       }
       .cta-button {
         display: inline-block;
         background: linear-gradient(135deg, #F43F5E, #EC4899);
-        color: #ffffff;
+        color: #ffffff !important;
         padding: 12px 24px;
         text-decoration: none;
         border-radius: 6px;
@@ -67,6 +72,10 @@ function formatEmailContent(notification, webappUrl) {
         font-size: 12px;
         color: #666666;
         text-align: center;
+        background-color: #ffffff;
+      }
+      .footer p {
+        color: #666666;
       }
       .emoji {
         font-size: 24px;
@@ -76,6 +85,28 @@ function formatEmailContent(notification, webappUrl) {
       .highlight {
         color: #F43F5E;
         font-weight: bold;
+      }
+      /* Additional styles to ensure text visibility */
+      .header * {
+        color: #ffffff;
+      }
+      .content * {
+        color: #333333;
+      }
+      .highlight {
+        color: #F43F5E !important;
+      }
+      /* Style for active users section */
+      .active-users {
+        background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(236, 72, 153, 0.1));
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid rgba(244, 63, 94, 0.2);
+      }
+      .active-users p {
+        color: #333333;
+        margin: 0;
       }
     </style>
   `;
@@ -115,7 +146,9 @@ function formatEmailContent(notification, webappUrl) {
       mainMessage = `
         <p>Don't forget to get your workout in today!</p>
         ${notification.active_users > 0 ? 
-          `<p><span class="highlight">${notification.active_users}</span> of your friends have already worked out today. Time to join them! <span class="emoji">💫</span></p>` 
+          `<div class="active-users">
+            <p><span class="highlight">${notification.active_users}</span> of your friends have already worked out today. Time to join them! <span class="emoji">💫</span></p>
+           </div>` 
           : '<p>Be the first to work out today and inspire others! <span class="emoji">✨</span></p>'}
       `;
     }
