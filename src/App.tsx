@@ -33,8 +33,7 @@ function App() {
   const [userProfile, setUserProfile] = useState({
     pulseLevel: 0,
     lastWorkout: null,
-    restDayUsed: false,
-    lastRestDay: null
+    restDayUsed: false
   });
   const [copied, setCopied] = useState(false);
   const { user, signOut } = useAuth();
@@ -48,7 +47,7 @@ function App() {
   async function loadUserProfile() {
     const { data, error } = await supabase
       .from('profiles')
-      .select('pulse_level, last_workout_at, rest_day_used, last_rest_day')
+      .select('pulse_level, last_workout_at, rest_day_used')
       .eq('id', user?.id)
       .single();
 
@@ -60,8 +59,7 @@ function App() {
     setUserProfile({
       pulseLevel: data.pulse_level || 0,
       lastWorkout: data.last_workout_at,
-      restDayUsed: data.rest_day_used || false,
-      lastRestDay: data.last_rest_day
+      restDayUsed: data.rest_day_used || false
     });
   }
 
@@ -142,13 +140,8 @@ function App() {
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     {userProfile.restDayUsed 
                       ? "You've used your rest day. Your Pulse will start decreasing if you don't work out today."
-                      : "You have a free rest day available. Use it wisely to maintain your Pulse level without working out."}
+                      : "You have a rest day available, everyone needs one once in a while!"}
                   </p>
-                  {userProfile.lastRestDay && (
-                    <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-                      Last rest day used: {format(new Date(userProfile.lastRestDay), 'MMM d, yyyy')}
-                    </p>
-                  )}
                 </div>
                 
                 <div className="w-full">
