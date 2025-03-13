@@ -16,6 +16,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const { signIn, signUp } = useAuth();
 
   // Password requirements
@@ -32,8 +33,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     hasLowerCase && 
     hasNumber && 
     hasSpecialChar;
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +66,79 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       toast.error(error instanceof Error ? error.message : 'An error occurred');
     }
   };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast.success('Password reset instructions sent to your email');
+      setIsForgotPassword(false);
+      onClose();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred');
+    }
+  };
+
+  if (!isOpen) return null;
+
+  if (isForgotPassword) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-slate-800 p-8 rounded-xl w-full max-w-md relative">
+          <button
+            onClick={() => {
+              setIsForgotPassword(false);
+              onClose();
+            }}
+            className="absolute top-4 right-4 text-slate-400 hover:text-white"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <h2 className="text-2xl font-bold text-white mb-6">
+            Reset Password
+          </h2>
+          
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+                required
+              />
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full bg-rose-500 text-white py-2 px-4 rounded-lg hover:bg-rose-600 transition-colors"
+            >
+              Send Reset Instructions
+            </button>
+          </form>
+          
+          <p className="text-slate-400 text-center mt-6">
+            Remember your password?{' '}
+            <button
+              onClick={() => setIsForgotPassword(false)}
+              className="text-rose-400 hover:text-rose-300"
+            >
+              Sign In
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -166,6 +238,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </ul>
               </div>
             </>
+          )}
+          
+          {!isSignUp && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => setIsForgotPassword(true)}
+                className="text-sm text-rose-400 hover:text-rose-300"
+              >
+                Forgot Password?
+              </button>
+            </div>
           )}
           
           <button
