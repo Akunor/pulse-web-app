@@ -31,25 +31,44 @@ export default function ResetPassword() {
     // Handle both URL parameters and hash fragments
     const handleResetToken = async () => {
       try {
-        // First check URL parameters for error
+        // Check if we're coming from a password reset email
+        const type = router.query.type;
+        if (type === 'recovery') {
+          // Get the access token and refresh token
+          const { data: { session }, error: recoveryError } = await supabase.auth.getSession();
+          
+          if (recoveryError) throw recoveryError;
+          
+          if (!session) {
+            // If no session, try to exchange the recovery token
+            const { data, error } = await supabase.auth.verifyOtp({
+              token_hash: router.query.token_hash as string,
+              type: 'recovery'
+            });
+            
+            if (error) throw error;
+          }
+          
+          setLoading(false);
+          return;
+        }
+
+        // Handle other cases (existing code)
         const { error, error_description } = router.query;
         if (error || error_description) {
           throw new Error(error_description as string || 'Reset link has expired');
         }
 
-        // Then check hash fragments
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         
         if (!accessToken) {
-          // If no access token in hash, try to recover session
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) {
             throw new Error('Invalid reset link');
           }
         } else {
-          // Set the session with the tokens
           const { error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || '',
@@ -66,8 +85,11 @@ export default function ResetPassword() {
       }
     };
 
-    handleResetToken();
-  }, [router]);
+    // Only run if we have query parameters
+    if (router.isReady) {
+      handleResetToken();
+    }
+  }, [router.isReady, router.query, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
