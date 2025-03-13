@@ -2,11 +2,12 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format, subDays } from 'date-fns';
-import { Flame } from 'lucide-react';
+import { Flame, Moon, Circle } from 'lucide-react';
 
 interface DayActivity {
   date: Date;
   hasWorkout: boolean;
+  isRestDay: boolean;
 }
 
 export function WeeklyActivity() {
@@ -21,45 +22,70 @@ export function WeeklyActivity() {
   async function loadWeeklyActivity() {
     const sevenDaysAgo = subDays(new Date(), 7);
 
-    const { data, error } = await supabase
-      .from('workouts')
-      .select('completed_at')
-      .eq('user_id', user?.id)
-      .gte('completed_at', sevenDaysAgo.toISOString());
+    // Get both workouts and rest days
+    const [workoutsResponse, restDaysResponse] = await Promise.all([
+      supabase
+        .from('workouts')
+        .select('completed_at')
+        .eq('user_id', user?.id)
+        .gte('completed_at', sevenDaysAgo.toISOString()),
+      supabase
+        .from('rest_days')
+        .select('date')
+        .eq('user_id', user?.id)
+        .gte('date', sevenDaysAgo.toISOString())
+    ]);
 
-    if (error) return;
+    if (workoutsResponse.error || restDaysResponse.error) return;
 
     const workoutDays = new Set(
-      data.map(w => new Date(w.completed_at).toDateString())
+      workoutsResponse.data.map(w => new Date(w.completed_at).toDateString())
+    );
+
+    const restDays = new Set(
+      restDaysResponse.data.map(r => new Date(r.date).toDateString())
     );
 
     const weekDays: DayActivity[] = [];
     for (let i = 6; i >= 0; i--) {
       const date = subDays(new Date(), i);
+      const dateString = date.toDateString();
       weekDays.push({
         date,
-        hasWorkout: workoutDays.has(date.toDateString())
+        hasWorkout: workoutDays.has(dateString),
+        isRestDay: restDays.has(dateString)
       });
     }
 
     setDays(weekDays);
   }
 
+  const getActivityIcon = (day: DayActivity) => {
+    if (day.hasWorkout) {
+      return <Flame className="w-4 h-4 text-rose-500 animate-pulse" />;
+    }
+    if (day.isRestDay) {
+      return <Moon className="w-4 h-4 text-blue-500" />;
+    }
+    return <Circle className="w-4 h-4 text-slate-300 dark:text-slate-600" />;
+  };
+
+  const getActivityTextColor = (day: DayActivity) => {
+    if (day.hasWorkout) return "text-rose-400";
+    if (day.isRestDay) return "text-blue-400";
+    return "text-slate-400 dark:text-slate-500";
+  };
+
   return (
     <div className="flex justify-between mt-4 gap-1">
       {days.map((day, i) => (
         <div key={i} className="flex-1 text-center">
-          {day.hasWorkout ? (
-            <div className="flex flex-col items-center">
-              <Flame className="w-4 h-4 text-rose-500 animate-pulse" />
-              <span className="text-xs text-rose-400">{format(day.date, 'EEE')}</span>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center">
-              <div className="w-4 h-4" />
-              <span className="text-xs text-slate-600 dark:text-slate-400">{format(day.date, 'EEE')}</span>
-            </div>
-          )}
+          <div className="flex flex-col items-center">
+            {getActivityIcon(day)}
+            <span className={`text-xs ${getActivityTextColor(day)}`}>
+              {format(day.date, 'EEE')}
+            </span>
+          </div>
         </div>
       ))}
     </div>

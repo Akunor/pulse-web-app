@@ -5,7 +5,7 @@
 - Migrations folder is clogged with unnecessary code.
 
 ## Planned Features
-- Password reset and change features.
+✓ Password reset and change features.
 ✓ Switch to a dedicated email
 - Personalise decay aggression 
 ✓ Adapt emails for mobile and dark mode compatibility
