@@ -74,7 +74,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       await supabase.auth.signOut();
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password?type=recovery`
+        redirectTo: `${window.location.origin}/reset-password?type=recovery`,
+        // Add additional options to prevent auto-login
+        options: {
+          skipAutoSignIn: true
+        }
       });
       
       if (error) throw error;

@@ -1,8 +1,9 @@
 [build]
-  functions = "functions"
+  command = "npm run build"
+  publish = ".next"
 
 [[plugins]]
-  package = "@netlify/plugin-functions-install-core"
+  package = "@netlify/plugin-nextjs"
 
 [functions]
   node_bundler = "esbuild"

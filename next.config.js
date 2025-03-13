@@ -1,4 +1,16 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  output: 'standalone',
+  // Ensure reset-password page is included in the build
+  async rewrites() {
+    return [
+      {
+        source: '/reset-password',
+        destination: '/reset-password',
+      },
+    ];
+  },
   async redirects() {
     return [
       {
@@ -15,4 +27,6 @@ module.exports = {
       },
     ];
   },
-} 
+}
+
+module.exports = nextConfig 

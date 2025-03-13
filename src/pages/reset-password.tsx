@@ -5,6 +5,9 @@ import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ResetPassword() {
+  console.log('Reset Password Page Loaded');
+  console.log('Current URL:', typeof window !== 'undefined' ? window.location.href : 'Server Side');
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,30 +31,44 @@ export default function ResetPassword() {
     hasSpecialChar;
 
   useEffect(() => {
-    // Handle both URL parameters and hash fragments
+    console.log('Reset Password Effect Running');
+    console.log('Router Query:', router.query);
+    console.log('Router Ready:', router.isReady);
+
     const handleResetToken = async () => {
       try {
-        // First, check if user is already logged in and sign them out
-        const { data: { session: existingSession } } = await supabase.auth.getSession();
-        if (existingSession) {
-          await supabase.auth.signOut();
-        }
+        console.log('Handling Reset Token');
+        
+        // Force sign out immediately
+        await supabase.auth.signOut();
+        console.log('Signed out existing session');
 
         // Check if we're coming from a password reset email
         const type = router.query.type;
+        console.log('Reset Type:', type);
+
         if (type === 'recovery') {
-          // Extract code from URL if present
-          const code = router.query.code as string;
+          // Get all URL parameters
+          console.log('URL Parameters:', router.query);
+          
+          // Try to get the recovery token from various places
+          const code = router.query.code || router.query.token || router.query.token_hash;
+          console.log('Recovery Code:', code);
           
           if (code) {
-            // Verify the recovery code
+            console.log('Attempting to verify OTP');
             const { data, error } = await supabase.auth.verifyOtp({
-              token: code,
+              token: code as string,
               type: 'recovery'
             });
             
-            if (error) throw error;
+            if (error) {
+              console.error('OTP Verification Error:', error);
+              throw error;
+            }
+            console.log('OTP Verification Success:', data);
           } else {
+            console.error('No recovery code found');
             throw new Error('No recovery code found in URL');
           }
           
@@ -68,13 +85,12 @@ export default function ResetPassword() {
         throw new Error('Invalid reset link');
 
       } catch (error) {
-        console.error('Error in reset flow:', error);
+        console.error('Reset Flow Error:', error);
         toast.error(error instanceof Error ? error.message : 'Invalid or expired reset link');
         router.push('/');
       }
     };
 
-    // Only run if we have query parameters
     if (router.isReady) {
       handleResetToken();
     }
