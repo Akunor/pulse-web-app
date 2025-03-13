@@ -1,13 +1,13 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "pulse",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "export": "next export",
-    "lint": "eslint .",
+    "lint": "next lint",
     "preview": "vite preview"
   },
   "dependencies": {
