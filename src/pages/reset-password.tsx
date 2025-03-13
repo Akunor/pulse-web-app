@@ -28,43 +28,45 @@ export default function ResetPassword() {
     hasSpecialChar;
 
   useEffect(() => {
-    const { error, error_description } = router.query;
-    
-    if (error || error_description) {
-      toast.error(error_description as string || 'Reset link has expired');
-      router.push('/');
-      return;
-    }
-
-    // Get access token from URL fragment
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const accessToken = hashParams.get('access_token');
-    const refreshToken = hashParams.get('refresh_token');
-    
-    if (!accessToken) {
-      toast.error('Invalid reset link');
-      router.push('/');
-      return;
-    }
-
-    // Set the session with the tokens
-    const setSession = async () => {
+    // Handle both URL parameters and hash fragments
+    const handleResetToken = async () => {
       try {
-        const { data, error } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken || '',
-        });
+        // First check URL parameters for error
+        const { error, error_description } = router.query;
+        if (error || error_description) {
+          throw new Error(error_description as string || 'Reset link has expired');
+        }
 
-        if (error) throw error;
+        // Then check hash fragments
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        
+        if (!accessToken) {
+          // If no access token in hash, try to recover session
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            throw new Error('Invalid reset link');
+          }
+        } else {
+          // Set the session with the tokens
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
+
+          if (sessionError) throw sessionError;
+        }
+
         setLoading(false);
       } catch (error) {
-        console.error('Error setting session:', error);
-        toast.error('Invalid or expired reset link');
+        console.error('Error in reset flow:', error);
+        toast.error(error instanceof Error ? error.message : 'Invalid or expired reset link');
         router.push('/');
       }
     };
 
-    setSession();
+    handleResetToken();
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
