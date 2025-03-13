@@ -7,20 +7,25 @@ import {
   addMonths,
   subMonths,
   isSameMonth,
-  isSameDay
+  isSameDay,
+  parseISO
 } from 'date-fns';
 import { Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
 interface WorkoutDay {
-  date: Date;
+  date: string;
   workouts: number;
 }
 
-export function Calendar() {
+interface CalendarProps {
+  workouts: WorkoutDay[];
+  // ... other props
+}
+
+export function Calendar({ workouts, ...props }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [workoutDays, setWorkoutDays] = React.useState<WorkoutDay[]>([]);
   const { user } = useAuth();
 
   React.useEffect(() => {
@@ -53,7 +58,7 @@ export function Calendar() {
       workouts: workoutsByDay[date.toDateString()] || 0
     }));
 
-    setWorkoutDays(days);
+    workouts = days;
   }
 
   const previousMonth = () => {
@@ -73,6 +78,22 @@ export function Calendar() {
 
   const emptyDays = monthStart.getDay();
   const emptyStartCells = Array(emptyDays).fill(null);
+
+  const getClassNames = (day: Date, workoutDay: any, currentDate: Date) => {
+    const baseClasses = 'aspect-square rounded-lg flex items-center justify-center';
+    
+    if (!isSameMonth(day, currentDate)) {
+      return `${baseClasses} opacity-50 bg-slate-50 dark:bg-slate-700/10 text-slate-500`;
+    }
+
+    const workoutCount = workoutDay?.workouts ?? 0;
+    
+    return `${baseClasses} ${
+      workoutCount > 0
+        ? 'bg-rose-500 text-white'
+        : 'bg-slate-100 dark:bg-slate-700/30 text-slate-900 dark:text-slate-300'
+    }`;
+  };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 mt-8">
@@ -112,19 +133,15 @@ export function Calendar() {
         ))}
 
         {monthDays.map((day, i) => {
-          const workoutDay = workoutDays.find(wd => isSameDay(wd.date, day));
+          const workoutDay = workouts.find(wd => isSameDay(parseISO(wd.date), day));
           return (
             <div
               key={i}
-              className={`aspect-square rounded-lg flex items-center justify-center ${
-                isSameMonth(day, currentDate)
-                  ? workoutDay?.workouts > 0
-                    ? 'bg-rose-500 text-white'
-                    : 'bg-slate-100 dark:bg-slate-700/30 text-slate-900 dark:text-slate-300'
-                  : 'opacity-50 bg-slate-50 dark:bg-slate-700/10 text-slate-500'
-              }`}
+              className={getClassNames(day, workoutDay, currentDate)}
             >
-              <span className="text-sm">{format(day, 'd')}</span>
+              <time dateTime={format(day, 'yyyy-MM-dd')}>
+                {format(day, 'd')}
+              </time>
             </div>
           );
         })}
