@@ -1,10 +1,4 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: 'export',  // Configure static export
-  images: {
-    unoptimized: true // Required for static export
-  },
-  // Remove rewrites since they don't work with static export
+module.exports = {
   async redirects() {
     return [
       {
@@ -21,6 +15,4 @@ const nextConfig = {
       },
     ];
   },
-}
-
-module.exports = nextConfig; 
+} 

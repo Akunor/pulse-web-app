@@ -3,5 +3,8 @@
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": "latest"
+  },
+  "rules": {
+    // Add any custom rules here
   }
 } 
