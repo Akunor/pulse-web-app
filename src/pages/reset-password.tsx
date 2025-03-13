@@ -96,6 +96,16 @@ export default function ResetPassword() {
     }
   }, [router.isReady, router.query, router]);
 
+  useEffect(() => {
+    // Sign out any existing session when landing on reset password page
+    const clearSession = async () => {
+      await supabase.auth.signOut();
+      setLoading(false);
+    };
+
+    clearSession();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

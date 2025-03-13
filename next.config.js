@@ -4,15 +4,7 @@ const nextConfig = {
   images: {
     unoptimized: true // Required for static export
   },
-  // Ensure reset-password page is included in the build
-  async rewrites() {
-    return [
-      {
-        source: '/reset-password',
-        destination: '/reset-password',
-      },
-    ];
-  },
+  // Remove rewrites since they don't work with static export
   async redirects() {
     return [
       {

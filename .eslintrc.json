@@ -1,5 +1,5 @@
 {
-  "extends": "next/core-web-configs",
+  "extends": ["next/core-web-configs"],
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": "latest"
@@ -7,5 +7,10 @@
   "rules": {
     // Add any custom rules here
   },
-  "ignorePatterns": ["src/_unused/**/*"]
+  "ignorePatterns": ["src/_unused/**/*"],
+  "settings": {
+    "next": {
+      "rootDir": "."
+    }
+  }
 } 
