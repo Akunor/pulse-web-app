@@ -9,6 +9,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   // Password requirements
@@ -27,16 +28,43 @@ export default function ResetPassword() {
     hasSpecialChar;
 
   useEffect(() => {
-    // Check if we have a session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+    const { error, error_description } = router.query;
+    
+    if (error || error_description) {
+      toast.error(error_description as string || 'Reset link has expired');
+      router.push('/');
+      return;
+    }
+
+    // Get access token from URL fragment
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token');
+    
+    if (!accessToken) {
+      toast.error('Invalid reset link');
+      router.push('/');
+      return;
+    }
+
+    // Set the session with the tokens
+    const setSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || '',
+        });
+
+        if (error) throw error;
+        setLoading(false);
+      } catch (error) {
+        console.error('Error setting session:', error);
         toast.error('Invalid or expired reset link');
         router.push('/');
       }
     };
-    
-    checkSession();
+
+    setSession();
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,11 +88,25 @@ export default function ResetPassword() {
       if (error) throw error;
 
       toast.success('Password updated successfully');
+      
+      // Sign out after password reset to ensure clean state
+      await supabase.auth.signOut();
+      
       router.push('/');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'An error occurred');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div className="bg-slate-800 p-8 rounded-xl w-full max-w-md text-center">
+          <p className="text-white">Verifying reset link...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
