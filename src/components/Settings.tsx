@@ -3,6 +3,7 @@ import { Settings as SettingsIcon, Sun, Moon, Bell, Copy, Check } from 'lucide-r
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { NotificationSettings } from './NotificationSettings';
+import { PasswordSettings } from './PasswordSettings';
 import toast from 'react-hot-toast';
 
 export function Settings() {
@@ -77,6 +78,8 @@ export function Settings() {
             )}
           </button>
         </div>
+
+        <PasswordSettings />
 
         <NotificationSettings />
       </div>
