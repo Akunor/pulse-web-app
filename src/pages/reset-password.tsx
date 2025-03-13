@@ -31,53 +31,42 @@ export default function ResetPassword() {
     // Handle both URL parameters and hash fragments
     const handleResetToken = async () => {
       try {
+        // First, check if user is already logged in and sign them out
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
+        if (existingSession) {
+          await supabase.auth.signOut();
+        }
+
         // Check if we're coming from a password reset email
         const type = router.query.type;
         if (type === 'recovery') {
-          // Get the access token and refresh token
-          const { data: { session }, error: recoveryError } = await supabase.auth.getSession();
+          // Extract code from URL if present
+          const code = router.query.code as string;
           
-          if (recoveryError) throw recoveryError;
-          
-          if (!session) {
-            // If no session, try to exchange the recovery token
+          if (code) {
+            // Verify the recovery code
             const { data, error } = await supabase.auth.verifyOtp({
-              token_hash: router.query.token_hash as string,
+              token: code,
               type: 'recovery'
             });
             
             if (error) throw error;
+          } else {
+            throw new Error('No recovery code found in URL');
           }
           
           setLoading(false);
           return;
         }
 
-        // Handle other cases (existing code)
+        // Handle other cases
         const { error, error_description } = router.query;
         if (error || error_description) {
           throw new Error(error_description as string || 'Reset link has expired');
         }
 
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        
-        if (!accessToken) {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) {
-            throw new Error('Invalid reset link');
-          }
-        } else {
-          const { error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || '',
-          });
+        throw new Error('Invalid reset link');
 
-          if (sessionError) throw sessionError;
-        }
-
-        setLoading(false);
       } catch (error) {
         console.error('Error in reset flow:', error);
         toast.error(error instanceof Error ? error.message : 'Invalid or expired reset link');
@@ -113,10 +102,13 @@ export default function ResetPassword() {
 
       toast.success('Password updated successfully');
       
-      // Sign out after password reset to ensure clean state
+      // Ensure user is signed out
       await supabase.auth.signOut();
       
-      router.push('/');
+      // Small delay to ensure signout is complete
+      setTimeout(() => {
+        router.push('/');
+      }, 500);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'An error occurred');
     }

@@ -70,6 +70,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Sign out any existing session first
+      await supabase.auth.signOut();
+      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password?type=recovery`
       });
