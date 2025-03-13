@@ -70,16 +70,13 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Sign out any existing session first
-      await supabase.auth.signOut();
-      
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password?type=recovery`
+        redirectTo: `${window.location.origin}/update-password`
       });
       
       if (error) throw error;
       
-      toast.success('Password reset instructions sent to your email');
+      toast.success('Check your email for the password reset link');
       setIsForgotPassword(false);
       onClose();
     } catch (error) {
