@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  output: 'standalone',
+  output: 'export',  // Configure static export
+  images: {
+    unoptimized: true // Required for static export
+  },
   // Ensure reset-password page is included in the build
   async rewrites() {
     return [
