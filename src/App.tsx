@@ -36,10 +36,12 @@ function App() {
   });
   const [copied, setCopied] = useState(false);
   const { user, signOut } = useAuth();
+  const [workouts, setWorkouts] = useState<WorkoutDay[]>([]);
   
   useEffect(() => {
     if (user) {
       loadUserProfile();
+      fetchWorkouts();
     }
   }, [user]);
 
@@ -86,12 +88,39 @@ function App() {
   const hasWorkedOutToday = userProfile.lastWorkout && 
     format(new Date(userProfile.lastWorkout), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
 
+  const fetchWorkouts = async () => {
+    const { data: workoutData, error } = await supabase
+      .from('workouts')
+      .select('date')
+      .eq('user_id', user?.id);
+
+    if (error) {
+      console.error('Error fetching workouts:', error);
+      return;
+    }
+
+    // Group workouts by date and count them
+    const workoutsByDate = workoutData.reduce((acc: { [key: string]: number }, workout) => {
+      const date = workout.date;
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Convert to array format needed by Calendar
+    const formattedWorkouts = Object.entries(workoutsByDate).map(([date, count]) => ({
+      date,
+      workouts: count
+    }));
+
+    setWorkouts(formattedWorkouts);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'workouts':
         return <WorkoutList />;
       case 'calendar':
-        return <Calendar />;
+        return <Calendar workouts={workouts} />;
       case 'progress':
         return <Progress />;
       case 'settings':

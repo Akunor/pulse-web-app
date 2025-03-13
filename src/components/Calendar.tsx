@@ -20,11 +20,11 @@ interface WorkoutDay {
 }
 
 interface CalendarProps {
-  workouts: WorkoutDay[];
+  workouts?: WorkoutDay[];
   // ... other props
 }
 
-export function Calendar({ workouts, ...props }: CalendarProps) {
+const Calendar: React.FC<CalendarProps> = ({ workouts = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { user } = useAuth();
 
@@ -148,4 +148,6 @@ export function Calendar({ workouts, ...props }: CalendarProps) {
       </div>
     </div>
   );
-}
+};
+
+export default Calendar;
