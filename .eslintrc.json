@@ -1,24 +1,7 @@
 {
-  "extends": ["next/core-web-configs"],
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "extends": "next/core-web-configs",
   "parserOptions": {
     "sourceType": "module",
-    "ecmaVersion": "latest",
-    "project": "./tsconfig.json"
-  },
-  "rules": {
-    // Add any custom rules here
-  },
-  "ignorePatterns": ["src/_unused/**/*"],
-  "settings": {
-    "next": {
-      "rootDir": "."
-    }
-  },
-  "env": {
-    "browser": true,
-    "es2021": true,
-    "node": true
+    "ecmaVersion": "latest"
   }
 } 
