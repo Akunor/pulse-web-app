@@ -95,7 +95,7 @@ function App() {
   // Add this function to check birthday range
   const isInBirthdayRange = (userId: string): boolean => {
     // Using your ID for testing
-    if (userId !== '56338f55-1967-49a1-bd86-8bdf5e970dc0') return false;
+    if (userId !== '079f3c6e-1362-4e5a-8110-b161691b4102') return false;
 
     const today = new Date();
     // March 16th
@@ -227,7 +227,7 @@ function App() {
                 🎉 Happy Birthday! 🎉
               </div>
               <div className="text-slate-300">
-                Dear Lichey, happy birthday! I know this isn't the most glamorous birthday gift, but I hope it meets the standard for a cutesy present. I love you so much, and I miss you every single day. I can't wait to see you again, and I promise I'll get you something more special next time. Lots of love, Samuel ❤️
+                Dear Lichey, happy birthday! I know this isn't the most glamorous birthday gift, but I hope it meets the standard for a cutesy little present. I love you so much, and I miss you every single day. I can't wait to see you again, and I promise I'll get you something super special for your next birthday. Lots of worldwide love, Samuel ❤️
               </div>
             </div>
           )}
