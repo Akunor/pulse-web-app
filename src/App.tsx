@@ -26,6 +26,12 @@ import { supabase } from './lib/supabase';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 
+// Add this near your other interfaces/types
+interface BirthdayRange {
+  start: Date;
+  end: Date;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -85,6 +91,26 @@ function App() {
 
   const hasWorkedOutToday = userProfile.lastWorkout && 
     format(new Date(userProfile.lastWorkout), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+
+  // Add this function to check birthday range
+  const isInBirthdayRange = (userId: string): boolean => {
+    // Using your ID for testing
+    if (userId !== '56338f55-1967-49a1-bd86-8bdf5e970dc0') return false;
+
+    const today = new Date();
+    // March 16th
+    const birthday = new Date(today.getFullYear(), 2, 16); // Month is 0-based, so 2 = March
+    const rangeEnd = new Date(birthday);
+    rangeEnd.setDate(birthday.getDate() + 3);
+
+    // For testing: log the date range
+    console.log('Birthday:', birthday.toLocaleDateString());
+    console.log('Range End:', rangeEnd.toLocaleDateString());
+    console.log('Today:', today.toLocaleDateString());
+    console.log('Is in range:', today >= birthday && today <= rangeEnd);
+
+    return today >= birthday && today <= rangeEnd;
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -195,6 +221,17 @@ function App() {
         </header>
 
         <main className="max-w-7xl mx-auto p-4 pt-32 pb-24">
+          {user && isInBirthdayRange(user.id) && (
+            <div className="bg-rose-500/10 rounded-xl p-6 mb-6 text-center animate-fade-in">
+              <div className="text-2xl font-bold text-rose-500 mb-2">
+                🎉 Happy Birthday! 🎉
+              </div>
+              <div className="text-slate-300">
+                To the most amazing person who makes every day brighter! ❤️
+              </div>
+            </div>
+          )}
+          
           {user ? (
             renderContent()
           ) : (
