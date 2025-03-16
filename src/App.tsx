@@ -227,7 +227,7 @@ function App() {
                 🎉 Happy Birthday! 🎉
               </div>
               <div className="text-slate-300">
-                To the most amazing person who makes every day brighter! ❤️
+                Dear Lichey, happy birthday! I know this isn't the most glamorous birthday gift, but I hope it meets the standard for a cutesy present. I love you so much, and I miss you every single day. I can't wait to see you again, and I promise I'll get you something more special next time. Lots of love, Samuel ❤️
               </div>
             </div>
           )}
