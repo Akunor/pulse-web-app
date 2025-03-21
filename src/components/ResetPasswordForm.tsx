@@ -137,7 +137,11 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
             </ul>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white shadow-lg" 
+            disabled={isLoading}
+          >
             {isLoading ? 'Resetting...' : 'Reset Password'}
           </Button>
         </form>
