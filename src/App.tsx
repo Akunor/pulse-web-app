@@ -20,6 +20,7 @@ import { useTheme } from './contexts/ThemeContext';
 import { AuthModal } from './components/AuthModal';
 import { FriendsList } from './components/FriendsList';
 import { WorkoutList } from './components/WorkoutList';
+import { WorkoutHistory } from './components/WorkoutHistory';
 import { Calendar } from './components/Calendar';
 import { Progress } from './components/Progress';
 import { Settings } from './components/Settings';
@@ -133,7 +134,7 @@ function AppContent() {
   const renderContent = () => {
     switch (activeTab) {
       case 'workouts':
-        return <WorkoutList onNavigateToWorkouts={() => setActiveTab('workouts')} />;
+        return <WorkoutHistory />;
       case 'calendar':
         return <Calendar />;
       case 'progress':
