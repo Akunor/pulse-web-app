@@ -1,4 +1,4 @@
--- Document existing database objects
+-- Document existing database objects that initally existed in the database before any migrations that were run.
 -- This migration adds documentation comments to all existing tables and functions
 
 -- First, remove any existing comments to prevent conflicts

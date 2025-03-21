@@ -2,7 +2,7 @@
 
 ## Current Issues
 - queue_user_notifications() is reading 'active_users' from all profiles and not just friends.
-- Migrations folder is clogged with unnecessary code.
+✓ Migrations folder is clogged with unnecessary code.
 
 ## Planned Features
 ✓ Password reset and change features.
