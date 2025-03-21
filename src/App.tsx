@@ -25,6 +25,8 @@ import { Logo } from './components/Logo';
 import { supabase } from './lib/supabase';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 // Add this near your other interfaces/types
 interface BirthdayRange {
@@ -32,7 +34,7 @@ interface BirthdayRange {
   end: Date;
 }
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [userProfile, setUserProfile] = useState({
@@ -42,6 +44,8 @@ function App() {
   });
   const [copied, setCopied] = useState(false);
   const { user, signOut } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (user) {
@@ -292,6 +296,17 @@ function App() {
         )}
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="*" element={<AppContent />} />
+      </Routes>
+    </Router>
   );
 }
 
