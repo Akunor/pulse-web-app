@@ -47,6 +47,16 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
     }
 
     try {
+      // First, get the current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) throw sessionError;
+      
+      if (!session) {
+        throw new Error('No active session found');
+      }
+
+      // Then update the password
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -56,6 +66,7 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps) {
       toast.success('Password updated successfully!');
       onSuccess();
     } catch (err) {
+      console.error('Password reset error:', err);
       toast.error(err instanceof Error ? err.message : 'An error occurred while resetting your password');
     } finally {
       setIsLoading(false);

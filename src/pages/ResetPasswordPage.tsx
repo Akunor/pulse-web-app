@@ -30,7 +30,7 @@ export default function ResetPasswordPage() {
 
         // Then verify the recovery token
         const { error } = await supabase.auth.verifyOtp({
-          token_hash: token,
+          token,
           type: 'recovery'
         });
 
