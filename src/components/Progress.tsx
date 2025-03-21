@@ -89,13 +89,10 @@ export function Progress() {
 
     if (restDaysError) return;
 
-    // Calculate basic stats
+    // Calculate total stats
     const totalWorkouts = workouts.length;
-    const totalCalories = workouts.reduce((sum, w) => sum + w.calories, 0);
-    const totalMinutes = workouts.reduce((sum, w) => {
-      const duration = new Date(w.duration).getMinutes();
-      return sum + duration;
-    }, 0);
+    const totalMinutes = workouts.reduce((sum, w) => sum + (Number(w.minutes) || 0), 0);
+    const totalCalories = workouts.reduce((sum, w) => sum + (Number(w.calories) || 0), 0);
 
     // Calculate weekly stats
     const now = new Date();
@@ -189,21 +186,32 @@ export function Progress() {
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Progress Overview</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Overall Stats */}
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-rose-400" />
-              <h3 className="text-slate-900 dark:text-white font-semibold">Overall Stats</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center">
+            <Activity className="w-6 h-6 mr-2 text-rose-500" />
+            Overall Stats
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+              <p className="text-sm text-rose-600 dark:text-rose-400">Total Workouts</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalWorkouts}</p>
             </div>
-            <div className="space-y-2">
-              <p className="text-slate-700 dark:text-slate-300">Total Workouts: {stats.totalWorkouts}</p>
-              <p className="text-slate-700 dark:text-slate-300">Total Minutes: {stats.totalMinutes}</p>
-              <p className="text-slate-700 dark:text-slate-300">Calories Burned: {stats.totalCalories}</p>
-              <p className="text-slate-700 dark:text-slate-300">Highest Pulse: {stats.bestStreak}</p>
+            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+              <p className="text-sm text-rose-600 dark:text-rose-400">Total Minutes</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalMinutes}</p>
+            </div>
+            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+              <p className="text-sm text-rose-600 dark:text-rose-400">Calories Burned</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalCalories}</p>
+            </div>
+            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+              <p className="text-sm text-rose-600 dark:text-rose-400">Highest Pulse</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.bestStreak}</p>
             </div>
           </div>
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Weekly Stats */}
           <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
