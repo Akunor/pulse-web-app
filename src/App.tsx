@@ -279,8 +279,37 @@ function AppContent() {
                   onClick={() => setActiveTab('dashboard')}
                   className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
                 >
-                  <Logo className="w-6 h-6" variant="small" />
-                  <span className="text-xs">Pulse</span>
+                  {activeTab === 'dashboard' ? (
+                    <>
+                      <Logo className="w-6 h-6" variant="small" />
+                      <span className="text-xs">Pulse</span>
+                    </>
+                  ) : activeTab === 'workouts' ? (
+                    <>
+                      <Dumbbell className="w-6 h-6" />
+                      <span className="text-xs">Workouts</span>
+                    </>
+                  ) : activeTab === 'calendar' ? (
+                    <>
+                      <CalendarIcon className="w-6 h-6" />
+                      <span className="text-xs">Calendar</span>
+                    </>
+                  ) : activeTab === 'progress' ? (
+                    <>
+                      <LineChart className="w-6 h-6" />
+                      <span className="text-xs">Progress</span>
+                    </>
+                  ) : activeTab === 'leaderboard' ? (
+                    <>
+                      <Trophy className="w-6 h-6" />
+                      <span className="text-xs">Leaderboard</span>
+                    </>
+                  ) : activeTab === 'settings' ? (
+                    <>
+                      <SettingsIcon className="w-6 h-6" />
+                      <span className="text-xs">Settings</span>
+                    </>
+                  ) : null}
                 </button>
                 <button 
                   onClick={() => setShowNavMenu(!showNavMenu)}
