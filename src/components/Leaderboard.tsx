@@ -25,6 +25,22 @@ export default function Leaderboard() {
 
   async function loadLeaderboard() {
     try {
+      setLoading(true);
+      console.log('Loading leaderboard for tab:', activeTab);
+
+      // First, let's get all profiles to see what data we have
+      const { data: allProfiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, email, pulse_level, avatar_url')
+        .order('pulse_level', { ascending: false });
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        throw profilesError;
+      }
+
+      console.log('All profiles:', allProfiles);
+
       let query = supabase
         .from('profiles')
         .select('id, email, pulse_level, avatar_url')
@@ -39,20 +55,31 @@ export default function Leaderboard() {
           .select('friend_id')
           .eq('user_id', user.id);
 
-        if (friendshipError) throw friendshipError;
+        if (friendshipError) {
+          console.error('Error fetching friendships:', friendshipError);
+          throw friendshipError;
+        }
+
+        console.log('Friendships:', friendships);
 
         friendIds = friendships?.map((f: { friend_id: string }) => f.friend_id) || [];
         if (user.id) {
           friendIds.push(user.id); // Include current user
         }
 
+        console.log('Friend IDs:', friendIds);
         query = query.in('id', friendIds);
       }
 
       // Get top 5 users
       const { data: topData, error: topError } = await query.limit(5);
 
-      if (topError) throw topError;
+      if (topError) {
+        console.error('Error fetching top users:', topError);
+        throw topError;
+      }
+
+      console.log('Top users:', topData);
       setTopUsers(topData || []);
 
       // Get current user's position and neighbors
@@ -63,7 +90,12 @@ export default function Leaderboard() {
           .eq('id', user.id)
           .single();
 
-        if (userError) throw userError;
+        if (userError) {
+          console.error('Error fetching user data:', userError);
+          throw userError;
+        }
+
+        console.log('Current user data:', userData);
 
         // Get user's position
         const { count, error: countError } = await supabase
@@ -72,7 +104,12 @@ export default function Leaderboard() {
           .gte('pulse_level', userData.pulse_level)
           .in('id', activeTab === 'friends' ? friendIds : []);
 
-        if (countError) throw countError;
+        if (countError) {
+          console.error('Error counting user position:', countError);
+          throw countError;
+        }
+
+        console.log('User position count:', count);
         const userRank = count || 0;
         setUserPosition(userRank);
 
@@ -80,7 +117,12 @@ export default function Leaderboard() {
         const { data: neighborsData, error: neighborsError } = await query
           .range(Math.max(0, userRank - 3), userRank + 1);
 
-        if (neighborsError) throw neighborsError;
+        if (neighborsError) {
+          console.error('Error fetching neighbors:', neighborsError);
+          throw neighborsError;
+        }
+
+        console.log('User neighbors:', neighborsData);
         setUserNeighbors(neighborsData || []);
       }
     } catch (error) {
