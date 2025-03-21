@@ -219,7 +219,7 @@ export function Progress() {
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalMinutes}</p>
               </div>
               <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
-                <p className="text-sm text-rose-600 dark:text-rose-400">Calories Burned</p>
+                <p className="text-sm text-rose-600 dark:text-rose-400">Total Calories Burned</p>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalCalories}</p>
               </div>
             </div>

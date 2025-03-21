@@ -16,6 +16,7 @@ import { supabase } from '../lib/supabase';
 interface WorkoutDay {
   date: Date;
   workouts: number;
+  isRestDay: boolean;
 }
 
 export function Calendar() {
@@ -32,25 +33,38 @@ export function Calendar() {
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
 
-    const { data, error } = await supabase
-      .from('workouts')
-      .select('completed_at')
-      .eq('user_id', user?.id)
-      .gte('completed_at', start.toISOString())
-      .lte('completed_at', end.toISOString());
+    const [workoutsResponse, restDaysResponse] = await Promise.all([
+      supabase
+        .from('workouts')
+        .select('completed_at')
+        .eq('user_id', user?.id)
+        .gte('completed_at', start.toISOString())
+        .lte('completed_at', end.toISOString()),
+      supabase
+        .from('rest_days')
+        .select('date')
+        .eq('user_id', user?.id)
+        .gte('date', start.toISOString())
+        .lte('date', end.toISOString())
+    ]);
 
-    if (error) return;
+    if (workoutsResponse.error || restDaysResponse.error) return;
 
-    const workoutsByDay = data.reduce((acc: { [key: string]: number }, workout) => {
+    const workoutsByDay = workoutsResponse.data.reduce((acc: { [key: string]: number }, workout) => {
       const date = new Date(workout.completed_at).toDateString();
       acc[date] = (acc[date] || 0) + 1;
       return acc;
     }, {});
 
+    const restDays = new Set(
+      restDaysResponse.data.map(r => new Date(r.date).toDateString())
+    );
+
     const monthDays = eachDayOfInterval({ start, end });
     const days: WorkoutDay[] = monthDays.map(date => ({
       date,
-      workouts: workoutsByDay[date.toDateString()] || 0
+      workouts: workoutsByDay[date.toDateString()] || 0,
+      isRestDay: restDays.has(date.toDateString())
     }));
 
     setWorkoutDays(days);
@@ -118,8 +132,10 @@ export function Calendar() {
               key={i}
               className={`aspect-square rounded-lg flex items-center justify-center ${
                 isSameMonth(day, currentDate)
-                  ? workoutDay?.workouts > 0
+                  ? (workoutDay?.workouts ?? 0) > 0
                     ? 'bg-rose-500 text-white'
+                    : workoutDay?.isRestDay
+                    ? 'bg-blue-500 text-white'
                     : 'bg-slate-100 dark:bg-slate-700/30 text-slate-900 dark:text-slate-300'
                   : 'opacity-50 bg-slate-50 dark:bg-slate-700/10 text-slate-500'
               }`}
