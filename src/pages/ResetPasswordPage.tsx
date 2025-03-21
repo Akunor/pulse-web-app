@@ -17,6 +17,9 @@ export default function ResetPasswordPage() {
     const verifyToken = async () => {
       if (!token || type !== 'recovery') {
         toast.error('Invalid or expired password reset link');
+        // Sign out and clear any existing session
+        await supabase.auth.signOut();
+        localStorage.setItem('showAuthModal', 'true');
         navigate('/');
         return;
       }
@@ -31,12 +34,18 @@ export default function ResetPasswordPage() {
           type: 'recovery'
         });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Verification error:', error);
+          throw error;
+        }
 
         setIsVerifying(false);
       } catch (error) {
         console.error('Error verifying token:', error);
         toast.error('Invalid or expired password reset link');
+        // Sign out and clear any existing session
+        await supabase.auth.signOut();
+        localStorage.setItem('showAuthModal', 'true');
         navigate('/');
       }
     };
@@ -48,6 +57,8 @@ export default function ResetPasswordPage() {
     toast.success('Password reset successful! Please log in with your new password.');
     // Store a flag in localStorage to trigger the auth modal
     localStorage.setItem('showAuthModal', 'true');
+    // Ensure we're signed out
+    supabase.auth.signOut();
     setTimeout(() => navigate('/'), 2000);
   };
 
