@@ -27,16 +27,9 @@ export default function Leaderboard() {
       setLoading(true);
       console.log('Loading leaderboard for tab:', activeTab);
 
-      // Base query for profiles
-      const baseQuery = supabase
-        .from('profiles')
-        .select('id, email, pulse_level')
-        .order('pulse_level', { ascending: false });
-
-      let query = baseQuery;
+      let query;
       let friendIds: string[] = [];
       
-      // If in friends tab, filter for friends only
       if (activeTab === 'friends' && user) {
         // First get all friend IDs
         const { data: friendships, error: friendshipError } = await supabase
@@ -57,7 +50,17 @@ export default function Leaderboard() {
         }
 
         console.log('Friend IDs:', friendIds);
-        query = baseQuery.in('id', friendIds);
+        query = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false })
+          .in('id', friendIds);
+      } else {
+        // Global tab - get all users
+        query = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false });
       }
 
       // Get top 5 users
@@ -108,7 +111,11 @@ export default function Leaderboard() {
         setUserPosition(userRank);
 
         // Get neighbors (2 above and 2 below)
-        let neighborsQuery = baseQuery;
+        let neighborsQuery = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false });
+
         if (activeTab === 'friends') {
           neighborsQuery = neighborsQuery.in('id', friendIds);
         }
@@ -170,20 +177,20 @@ export default function Leaderboard() {
                     className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="relative">
-                        {index === 0 && <Trophy className="w-6 h-6 text-yellow-500 absolute -top-2 -right-2" />}
-                        {index === 1 && <Medal className="w-6 h-6 text-gray-400 absolute -top-2 -right-2" />}
-                        {index === 2 && <Medal className="w-6 h-6 text-amber-600 absolute -top-2 -right-2" />}
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
-                          {index + 1}
-                        </div>
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
+                        {index + 1}
                       </div>
                       <div>
                         <div className="font-medium text-slate-900 dark:text-white">{user.email}</div>
                         <div className="text-sm text-slate-500 dark:text-slate-400">Level {user.pulse_level}</div>
                       </div>
                     </div>
-                    <div className="text-rose-500 font-bold">{user.pulse_level}</div>
+                    <div className="flex items-center space-x-2">
+                      {index === 0 && <Trophy className="w-5 h-5 text-yellow-500" />}
+                      {index === 1 && <Medal className="w-5 h-5 text-gray-400" />}
+                      {index === 2 && <Medal className="w-5 h-5 text-amber-600" />}
+                      <div className="text-rose-500 font-bold">{user.pulse_level}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -242,20 +249,20 @@ export default function Leaderboard() {
                     className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="relative">
-                        {index === 0 && <Trophy className="w-6 h-6 text-yellow-500 absolute -top-2 -right-2" />}
-                        {index === 1 && <Medal className="w-6 h-6 text-gray-400 absolute -top-2 -right-2" />}
-                        {index === 2 && <Medal className="w-6 h-6 text-amber-600 absolute -top-2 -right-2" />}
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
-                          {index + 1}
-                        </div>
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
+                        {index + 1}
                       </div>
                       <div>
                         <div className="font-medium text-slate-900 dark:text-white">{user.email}</div>
                         <div className="text-sm text-slate-500 dark:text-slate-400">Level {user.pulse_level}</div>
                       </div>
                     </div>
-                    <div className="text-rose-500 font-bold">{user.pulse_level}</div>
+                    <div className="flex items-center space-x-2">
+                      {index === 0 && <Trophy className="w-5 h-5 text-yellow-500" />}
+                      {index === 1 && <Medal className="w-5 h-5 text-gray-400" />}
+                      {index === 2 && <Medal className="w-5 h-5 text-amber-600" />}
+                      <div className="text-rose-500 font-bold">{user.pulse_level}</div>
+                    </div>
                   </div>
                 ))}
               </div>
