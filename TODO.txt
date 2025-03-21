@@ -4,12 +4,13 @@
 ✓ queue_user_notifications() is reading 'active_users' from all profiles and not just friends.
 ✓ Migrations folder is clogged with unnecessary code.
 ✓ Password reset function not working
+* Leaderboard not displaying properly
 
 ## Planned Features
 
 ### Phase 1 - Core Exercise Features
 - Mobile app port?
-- Pulse leaderboard? (Global and friends only)
+* Pulse leaderboard? (Global and friends only)
 - More detailed accounts, usernames, locations, profile pics etc.
 - Exercise tracking with minimum requirements for pulse updates
 - Personalise decay aggression 
