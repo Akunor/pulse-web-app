@@ -1,3 +1,6 @@
+-- Drop existing function first
+DROP FUNCTION IF EXISTS delete_user_account(UUID);
+
 -- Function to delete a user's account and all associated data
 CREATE OR REPLACE FUNCTION delete_user_account(target_user_id UUID)
 RETURNS BOOLEAN
