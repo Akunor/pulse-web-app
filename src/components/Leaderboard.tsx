@@ -84,11 +84,16 @@ export default function Leaderboard() {
         console.log('Current user data:', userData);
 
         // Get user's position
-        const { count, error: countError } = await supabase
+        let positionQuery = supabase
           .from('profiles')
           .select('*', { count: 'exact', head: true })
-          .gte('pulse_level', userData.pulse_level)
-          .in('id', activeTab === 'friends' ? friendIds : []);
+          .gte('pulse_level', userData.pulse_level);
+
+        if (activeTab === 'friends') {
+          positionQuery = positionQuery.in('id', friendIds);
+        }
+
+        const { count, error: countError } = await positionQuery;
 
         if (countError) {
           console.error('Error counting user position:', countError);
@@ -100,7 +105,12 @@ export default function Leaderboard() {
         setUserPosition(userRank);
 
         // Get neighbors (2 above and 2 below)
-        const { data: neighborsData, error: neighborsError } = await query
+        let neighborsQuery = query;
+        if (activeTab === 'friends') {
+          neighborsQuery = neighborsQuery.in('id', friendIds);
+        }
+
+        const { data: neighborsData, error: neighborsError } = await neighborsQuery
           .range(Math.max(0, userRank - 3), userRank + 1);
 
         if (neighborsError) {
