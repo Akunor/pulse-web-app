@@ -1,5 +1,5 @@
 -- Function to delete a user's account and all associated data
-CREATE OR REPLACE FUNCTION delete_user_account(user_id UUID)
+CREATE OR REPLACE FUNCTION delete_user_account(target_user_id UUID)
 RETURNS BOOLEAN
 LANGUAGE plpgsql
 SECURITY DEFINER

@@ -25,7 +25,7 @@ export function DeleteAccount() {
     try {
       // Call the delete_user_account function with the user ID
       const { data, error } = await supabase
-        .rpc('delete_user_account', { user_id: user.id });
+        .rpc('delete_user_account', { target_user_id: user.id });
 
       if (error) {
         console.error('Supabase error:', error);
