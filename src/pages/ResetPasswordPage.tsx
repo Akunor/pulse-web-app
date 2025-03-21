@@ -1,23 +1,27 @@
 import React, { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const accessToken = searchParams.get('access_token');
+  
+  // Get the access token from either the search params or hash fragment
+  const accessToken = searchParams.get('access_token') || 
+                     location.hash.replace('#access_token=', '');
 
   useEffect(() => {
     if (!accessToken) {
       toast.error('Invalid or expired password reset link');
-      navigate('/login');
+      navigate('/');
     }
   }, [accessToken, navigate]);
 
   const handleSuccess = () => {
-    setTimeout(() => navigate('/login'), 2000);
+    setTimeout(() => navigate('/'), 2000);
   };
 
   if (!accessToken) {
