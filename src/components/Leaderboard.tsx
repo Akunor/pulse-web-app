@@ -27,13 +27,7 @@ export default function Leaderboard() {
       setLoading(true);
       console.log('Loading leaderboard for tab:', activeTab);
 
-      // For global tab, always get all users
-      const globalQuery = supabase
-        .from('profiles')
-        .select('id, email, pulse_level')
-        .order('pulse_level', { ascending: false });
-
-      let query = globalQuery;
+      let query;
       let friendIds: string[] = [];
       
       if (activeTab === 'friends' && user) {
@@ -56,7 +50,17 @@ export default function Leaderboard() {
         }
 
         console.log('Friend IDs:', friendIds);
-        query = globalQuery.in('id', friendIds);
+        query = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false })
+          .in('id', friendIds);
+      } else {
+        // Global tab - get all users without any filtering
+        query = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false });
       }
 
       // Get top 5 users
@@ -85,7 +89,7 @@ export default function Leaderboard() {
 
         console.log('Current user data:', userData);
 
-        // Get user's position using the global query for global tab
+        // Get user's position
         let positionQuery = supabase
           .from('profiles')
           .select('*', { count: 'exact', head: true })
@@ -106,8 +110,11 @@ export default function Leaderboard() {
         const userRank = count || 0;
         setUserPosition(userRank);
 
-        // Get neighbors using the global query for global tab
-        let neighborsQuery = globalQuery;
+        // Get neighbors (2 above and 2 below)
+        let neighborsQuery = supabase
+          .from('profiles')
+          .select('id, email, pulse_level')
+          .order('pulse_level', { ascending: false });
 
         if (activeTab === 'friends') {
           neighborsQuery = neighborsQuery.in('id', friendIds);
