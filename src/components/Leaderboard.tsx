@@ -131,6 +131,19 @@ export default function Leaderboard() {
 
   async function loadGlobalLeaderboard() {
     console.log('Fetching all users for global leaderboard...');
+    
+    // First, get the total count of profiles
+    const { count, error: countError } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
+    
+    if (countError) {
+      console.error('Error getting profile count:', countError);
+      throw countError;
+    }
+    
+    console.log('Total profiles in database:', count);
+
     // Get all users sorted by pulse_level
     const { data: allUsers, error: allUsersError } = await supabase
       .from('profiles')
@@ -144,6 +157,7 @@ export default function Leaderboard() {
 
     console.log('Fetched users:', allUsers?.length || 0);
     console.log('First few users:', allUsers?.slice(0, 3));
+    console.log('Raw query response:', allUsers);
 
     // Set top 5 users
     const topUsers = allUsers?.slice(0, 5) || [];
