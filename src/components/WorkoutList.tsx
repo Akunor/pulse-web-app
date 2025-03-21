@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dumbbell, Clock, FileWarning as Running, SwissFranc as Swim, Bike, Plus, X, Trash2, ArrowRight } from 'lucide-react';
+import { Dumbbell, Clock, FileWarning as Running, SwissFranc as Swim, Bike, Plus, X, Trash2, ArrowRight, List } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
@@ -40,12 +40,13 @@ const defaultWorkouts: Workout[] = [
 ];
 
 interface WorkoutListProps {
-  limit?: number;
+  onNavigateToWorkouts?: () => void;
 }
 
-export function WorkoutList({ limit }: WorkoutListProps) {
+export function WorkoutList({ onNavigateToWorkouts }: WorkoutListProps) {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [customWorkouts, setCustomWorkouts] = useState<Workout[]>([]);
+  const [recentWorkoutTypes, setRecentWorkoutTypes] = useState<Workout[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customWorkout, setCustomWorkout] = useState({
     name: '',
@@ -60,17 +61,12 @@ export function WorkoutList({ limit }: WorkoutListProps) {
   }, [user]);
 
   async function loadWorkouts() {
-    let query = supabase
+    const { data, error } = await supabase
       .from('workouts')
       .select('*')
       .eq('user_id', user?.id)
-      .order('completed_at', { ascending: false });
-
-    if (limit) {
-      query = query.limit(limit);
-    }
-
-    const { data, error } = await query;
+      .order('completed_at', { ascending: false })
+      .limit(3);
 
     if (error) {
       toast.error('Failed to load workouts');
@@ -78,6 +74,24 @@ export function WorkoutList({ limit }: WorkoutListProps) {
     }
 
     setWorkouts(data || []);
+    updateRecentWorkoutTypes(data || []);
+  }
+
+  function updateRecentWorkoutTypes(completedWorkouts: any[]) {
+    // Get unique workout names from completed workouts
+    const uniqueWorkoutNames = [...new Set(completedWorkouts.map(w => w.name))];
+    
+    // Map workout names to their full workout objects
+    const recentTypes = uniqueWorkoutNames
+      .map(name => {
+        const workout = defaultWorkouts.find(w => w.name === name) ||
+          customWorkouts.find(w => w.name === name);
+        return workout;
+      })
+      .filter((workout): workout is Workout => workout !== undefined)
+      .slice(0, 3);
+
+    setRecentWorkoutTypes(recentTypes);
   }
 
   async function loadCustomWorkouts() {
@@ -126,13 +140,6 @@ export function WorkoutList({ limit }: WorkoutListProps) {
         return;
       }
 
-      // Log attempt details
-      console.log('Attempting to complete workout:', {
-        name: workout.name,
-        duration: durationInMinutes,
-        userId: user?.id
-      });
-
       const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const { error: timezoneError } = await supabase
         .from('profiles')
@@ -141,11 +148,9 @@ export function WorkoutList({ limit }: WorkoutListProps) {
 
       if (timezoneError) {
         console.error('Timezone update error:', timezoneError);
-        // Continue with workout logging even if timezone update fails
       }
 
-      // Calculate estimated calories (rough estimate based on duration)
-      const estimatedCalories = Math.round(durationInMinutes * 7); // Average 7 calories per minute
+      const estimatedCalories = Math.round(durationInMinutes * 7);
 
       const workoutData = {
         user_id: user?.id,
@@ -155,26 +160,17 @@ export function WorkoutList({ limit }: WorkoutListProps) {
         completed_at: new Date().toISOString()
       };
 
-      // Log the data being sent
-      console.log('Sending workout data:', workoutData);
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('workouts')
         .insert([workoutData])
         .select();
 
       if (error) {
-        console.error('Workout completion error:', {
-          error,
-          details: error.details,
-          hint: error.hint,
-          message: error.message
-        });
+        console.error('Workout completion error:', error);
         toast.error(`Failed to complete workout: ${error.message}`);
         return;
       }
 
-      console.log('Workout completed successfully:', data);
       toast.success('Workout completed!');
       loadWorkouts();
     } catch (error) {
@@ -214,8 +210,6 @@ export function WorkoutList({ limit }: WorkoutListProps) {
     setCustomWorkout({ name: '', duration: '' });
   };
 
-  const isMainPage = window.location.pathname === '/';
-
   return (
     <div>
       <div className="flex items-center space-x-2 mb-6">
@@ -224,7 +218,7 @@ export function WorkoutList({ limit }: WorkoutListProps) {
       </div>
 
       <div id="all-workouts" className="space-y-4">
-        {defaultWorkouts.map((workout) => (
+        {recentWorkoutTypes.map((workout) => (
           <div
             key={workout.id}
             className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
@@ -251,46 +245,17 @@ export function WorkoutList({ limit }: WorkoutListProps) {
             </button>
           </div>
         ))}
-
-        {customWorkouts.map((workout) => (
-          <div
-            key={workout.id}
-            className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="bg-rose-500/20 p-3 rounded-full">
-                {workout.icon}
-              </div>
-              <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white">{workout.name}</h3>
-                <div className="flex items-center space-x-3 text-sm text-slate-600 dark:text-slate-400">
-                  <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {workout.duration} mins
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => removeCustomWorkout(workout.id)}
-                className="p-2 text-slate-400 hover:text-rose-500 transition-colors"
-                title="Remove workout"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => completeWorkout(workout)}
-                className="px-4 py-2 bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors"
-              >
-                Log
-              </button>
-            </div>
-          </div>
-        ))}
       </div>
 
       <div className="border-t border-slate-200 dark:border-slate-700 pt-6 mb-8">
+        <button
+          onClick={onNavigateToWorkouts}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-50 dark:bg-slate-700/50 text-slate-900 dark:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors mb-4"
+        >
+          <List className="w-5 h-5" />
+          <span>View All Workouts</span>
+        </button>
+
         <button
           onClick={() => setShowCustomForm(!showCustomForm)}
           className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-50 dark:bg-slate-700/50 text-slate-900 dark:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
@@ -340,21 +305,17 @@ export function WorkoutList({ limit }: WorkoutListProps) {
       {workouts.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Workout History</h3>
-            {isMainPage && (
-              <button
-                onClick={() => {
-                  window.location.href = '/workouts';
-                }}
-                className="flex items-center text-rose-500 hover:text-rose-600 text-sm font-medium"
-              >
-                View Full History
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </button>
-            )}
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Recent Workouts</h3>
+            <button
+              onClick={onNavigateToWorkouts}
+              className="flex items-center text-rose-500 hover:text-rose-600 text-sm font-medium"
+            >
+              View Full History
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </button>
           </div>
           <div className="space-y-3">
-            {(isMainPage ? workouts.slice(0, 3) : workouts).map((workout, index) => (
+            {workouts.map((workout, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg"

@@ -133,7 +133,7 @@ function AppContent() {
   const renderContent = () => {
     switch (activeTab) {
       case 'workouts':
-        return <WorkoutList />;
+        return <WorkoutList onNavigateToWorkouts={() => setActiveTab('workouts')} />;
       case 'calendar':
         return <Calendar />;
       case 'progress':
@@ -198,7 +198,7 @@ function AppContent() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
-                <WorkoutList limit={3} />
+                <WorkoutList onNavigateToWorkouts={() => setActiveTab('workouts')} />
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
                 <FriendsList />
