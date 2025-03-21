@@ -76,24 +76,24 @@ export default function Leaderboard() {
     return rankings.map((entry, index) => (
       <div
         key={entry.id}
-        className="flex items-center justify-between p-4 border-b last:border-b-0"
+        className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700 last:border-b-0 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
       >
         <div className="flex items-center gap-4">
-          <span className="text-lg font-semibold w-8">{index + 1}</span>
+          <span className="text-lg font-semibold w-8 text-slate-900 dark:text-white">{index + 1}</span>
           <Avatar>
             <AvatarImage src={entry.avatar_url} />
-            <AvatarFallback>
+            <AvatarFallback className="bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white">
               {entry.email.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <div>
-            <div className="font-medium">{entry.email}</div>
-            <div className="text-sm text-gray-500">
+            <div className="font-medium text-slate-900 dark:text-white">{entry.email}</div>
+            <div className="text-sm text-slate-600 dark:text-slate-400">
               {entry.streak_days} day streak
             </div>
           </div>
         </div>
-        <div className="text-xl font-bold text-primary">
+        <div className="text-xl font-bold text-rose-500">
           {entry.pulse_level} Pulse
         </div>
       </div>
@@ -102,32 +102,42 @@ export default function Leaderboard() {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="bg-white dark:bg-slate-800">
         <CardHeader>
-          <CardTitle>Leaderboard</CardTitle>
+          <CardTitle className="text-slate-900 dark:text-white">Leaderboard</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-4">Loading...</div>
+          <div className="text-center py-4 text-slate-600 dark:text-slate-400">Loading...</div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-slate-800">
       <CardHeader>
-        <CardTitle>Leaderboard</CardTitle>
+        <CardTitle className="text-slate-900 dark:text-white">Leaderboard</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="global" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="global">Global</TabsTrigger>
-            <TabsTrigger value="friends">Friends</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-slate-700">
+            <TabsTrigger 
+              value="global"
+              className="data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-rose-500"
+            >
+              Global
+            </TabsTrigger>
+            <TabsTrigger 
+              value="friends"
+              className="data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-rose-500"
+            >
+              Friends
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="global">
+          <TabsContent value="global" className="mt-4">
             {renderRankingList(globalRankings)}
           </TabsContent>
-          <TabsContent value="friends">
+          <TabsContent value="friends" className="mt-4">
             {renderRankingList(friendsRankings)}
           </TabsContent>
         </Tabs>

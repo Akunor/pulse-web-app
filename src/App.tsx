@@ -251,71 +251,7 @@ function AppContent() {
           )}
           
           {user ? (
-            <>
-              <nav className="flex space-x-4 mb-8">
-                <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'dashboard'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <Activity className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('workouts')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'workouts'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <Dumbbell className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('calendar')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'calendar'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <CalendarIcon className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('progress')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'progress'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <LineChart className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('leaderboard')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'leaderboard'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <Trophy className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('settings')}
-                  className={`p-2 rounded-lg transition-colors ${
-                    activeTab === 'settings'
-                      ? 'bg-white dark:bg-slate-800 text-rose-500'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-white/10'
-                  }`}
-                >
-                  <SettingsIcon className="w-6 h-6" />
-                </button>
-              </nav>
-              {renderContent()}
-            </>
+            renderContent()
           ) : (
             <div className="text-center py-20">
               <Logo className="w-24 h-24 text-rose-500 mx-auto mb-8" variant="main" />
@@ -330,6 +266,55 @@ function AppContent() {
             </div>
           )}
         </main>
+
+        {user && (
+          <nav className="fixed bottom-0 left-0 right-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 px-4 py-2">
+            <div className="max-w-7xl mx-auto flex justify-around">
+              <button 
+                onClick={() => setActiveTab('dashboard')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <Logo className="w-6 h-6" variant="small" />
+                <span className="text-xs">Pulse</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('workouts')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'workouts' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <Dumbbell className="w-6 h-6" />
+                <span className="text-xs">Workouts</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('calendar')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'calendar' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <CalendarIcon className="w-6 h-6" />
+                <span className="text-xs">Calendar</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('progress')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'progress' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <LineChart className="w-6 h-6" />
+                <span className="text-xs">Progress</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('leaderboard')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'leaderboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <Trophy className="w-6 h-6" />
+                <span className="text-xs">Leaderboard</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('settings')}
+                className={`p-2 flex flex-col items-center ${activeTab === 'settings' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+              >
+                <SettingsIcon className="w-6 h-6" />
+                <span className="text-xs">Settings</span>
+              </button>
+            </div>
+          </nav>
+        )}
       </div>
     </>
   );
