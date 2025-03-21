@@ -11,6 +11,10 @@ interface Friend {
   last_workout_at: string | null;
 }
 
+interface Friendship {
+  friend: Friend;
+}
+
 export function FriendsList() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [friendInput, setFriendInput] = useState('');
@@ -43,7 +47,7 @@ export function FriendsList() {
         return;
       }
 
-      setFriends(friendships.map(f => f.friend).filter(Boolean));
+      setFriends((friendships as unknown as Friendship[]).map(f => f.friend).filter(Boolean));
     } catch (error) {
       toast.error('Failed to load friends');
     }
@@ -188,7 +192,7 @@ export function FriendsList() {
         {friends.length === 0 && (
           <div className="text-center py-8 text-slate-600 dark:text-slate-400">
             <p>No friends added yet</p>
-            <p className="text-sm mt-2">Add friends by entering their User ID</p>
+            <p className="text-sm mt-2">Add friends by asking them for their User ID. This is found under Settings.</p>
           </div>
         )}
       </div>
