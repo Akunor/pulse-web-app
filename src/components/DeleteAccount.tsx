@@ -23,18 +23,6 @@ export function DeleteAccount() {
 
     setIsDeleting(true);
     try {
-      // First, verify the function exists
-      const { data: functionExists, error: functionCheckError } = await supabase
-        .from('pg_proc')
-        .select('proname')
-        .eq('proname', 'delete_user_account')
-        .single();
-
-      if (functionCheckError) {
-        console.error('Function check error:', functionCheckError);
-        throw new Error('Database function not found');
-      }
-
       // Call the delete_user_account function with the user ID
       const { data, error } = await supabase
         .rpc('delete_user_account', { user_id: user.id });
