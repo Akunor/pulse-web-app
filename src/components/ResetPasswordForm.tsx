@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-import { Alert, AlertDescription } from './ui/alert';
+import { Button } from './ui/button.tsx';
+import { Input } from './ui/input.tsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card.tsx';
+import { Alert, AlertDescription } from './ui/alert.tsx';
 import toast from 'react-hot-toast';
 
 interface ResetPasswordFormProps {
