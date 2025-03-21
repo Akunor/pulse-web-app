@@ -47,6 +47,15 @@ function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   
+  // Add effect to handle auth modal flag
+  useEffect(() => {
+    const shouldShowAuthModal = localStorage.getItem('showAuthModal');
+    if (shouldShowAuthModal === 'true') {
+      setShowAuthModal(true);
+      localStorage.removeItem('showAuthModal');
+    }
+  }, []);
+
   useEffect(() => {
     if (user) {
       loadUserProfile();

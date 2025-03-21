@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [isVerifying, setIsVerifying] = useState(true);
   
@@ -23,9 +22,12 @@ export default function ResetPasswordPage() {
       }
 
       try {
-        // Verify the recovery token
+        // First, sign out any existing session
+        await supabase.auth.signOut();
+
+        // Then verify the recovery token
         const { error } = await supabase.auth.verifyOtp({
-          token,
+          token_hash: token,
           type: 'recovery'
         });
 
@@ -43,6 +45,9 @@ export default function ResetPasswordPage() {
   }, [token, type, navigate]);
 
   const handleSuccess = () => {
+    toast.success('Password reset successful! Please log in with your new password.');
+    // Store a flag in localStorage to trigger the auth modal
+    localStorage.setItem('showAuthModal', 'true');
     setTimeout(() => navigate('/'), 2000);
   };
 
