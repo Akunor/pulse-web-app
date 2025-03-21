@@ -39,7 +39,11 @@ const defaultWorkouts: Workout[] = [
   }
 ];
 
-export function WorkoutList() {
+interface WorkoutListProps {
+  limit?: number;
+}
+
+export function WorkoutList({ limit }: WorkoutListProps) {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [customWorkouts, setCustomWorkouts] = useState<Workout[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
@@ -56,11 +60,17 @@ export function WorkoutList() {
   }, [user]);
 
   async function loadWorkouts() {
-    const { data, error } = await supabase
+    let query = supabase
       .from('workouts')
       .select('*')
       .eq('user_id', user?.id)
       .order('completed_at', { ascending: false });
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       toast.error('Failed to load workouts');
