@@ -326,6 +326,16 @@ function AppContent() {
                 <div className="grid grid-cols-3 gap-4">
                   <button 
                     onClick={() => {
+                      setActiveTab('dashboard');
+                      setShowNavMenu(false);
+                    }}
+                    className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+                  >
+                    <Logo className="w-6 h-6" variant="small" />
+                    <span className="text-xs">Pulse</span>
+                  </button>
+                  <button 
+                    onClick={() => {
                       setActiveTab('workouts');
                       setShowNavMenu(false);
                     }}
