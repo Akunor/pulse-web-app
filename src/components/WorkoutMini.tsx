@@ -39,11 +39,11 @@ const defaultWorkouts: Workout[] = [
   }
 ];
 
-interface WorkoutListProps {
+interface WorkoutMiniProps {
   onNavigateToWorkouts?: () => void;
 }
 
-export function WorkoutList({ onNavigateToWorkouts }: WorkoutListProps) {
+export function WorkoutMini({ onNavigateToWorkouts }: WorkoutMiniProps) {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [customWorkouts, setCustomWorkouts] = useState<Workout[]>([]);
   const [recentWorkoutTypes, setRecentWorkoutTypes] = useState<Workout[]>([]);

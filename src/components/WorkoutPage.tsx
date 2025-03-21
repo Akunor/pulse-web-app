@@ -39,7 +39,7 @@ const defaultWorkouts: Workout[] = [
   }
 ];
 
-export function WorkoutHistory() {
+export function WorkoutPage() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [customWorkouts, setCustomWorkouts] = useState<Workout[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
@@ -192,7 +192,7 @@ export function WorkoutHistory() {
       <div>
         <div className="flex items-center space-x-2 mb-6">
           <Dumbbell className="w-6 h-6 text-rose-500" />
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Quick Log</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Log a Workout</h2>
         </div>
 
         <div className="space-y-4">

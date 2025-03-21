@@ -19,7 +19,8 @@ import { useAuth } from './contexts/AuthContext';
 import { useTheme } from './contexts/ThemeContext';
 import { AuthModal } from './components/AuthModal';
 import { FriendsList } from './components/FriendsList';
-import { WorkoutList } from './components/WorkoutList';
+import { WorkoutMini } from './components/WorkoutMini';
+import { WorkoutPage } from './components/WorkoutPage';
 import { WorkoutHistory } from './components/WorkoutHistory';
 import { Calendar } from './components/Calendar';
 import { Progress } from './components/Progress';
@@ -134,7 +135,7 @@ function AppContent() {
   const renderContent = () => {
     switch (activeTab) {
       case 'workouts':
-        return <WorkoutHistory />;
+        return <WorkoutPage />;
       case 'calendar':
         return <Calendar />;
       case 'progress':
@@ -199,7 +200,7 @@ function AppContent() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
-                <WorkoutList onNavigateToWorkouts={() => setActiveTab('workouts')} />
+                <WorkoutMini onNavigateToWorkouts={() => setActiveTab('workouts')} />
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
                 <FriendsList />
