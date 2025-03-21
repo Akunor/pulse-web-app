@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { NotificationSettings } from './NotificationSettings';
 import { PasswordSettings } from './PasswordSettings';
+import { DeleteAccount } from './DeleteAccount';
 import toast from 'react-hot-toast';
 
 export function Settings() {
@@ -82,6 +83,8 @@ export function Settings() {
         <PasswordSettings />
 
         <NotificationSettings />
+
+        <DeleteAccount />
       </div>
     </div>
   );
