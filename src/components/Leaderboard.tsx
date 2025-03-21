@@ -8,7 +8,6 @@ interface UserProfile {
   id: string;
   email: string;
   pulse_level: number;
-  avatar_url?: string;
 }
 
 export default function Leaderboard() {
@@ -28,22 +27,9 @@ export default function Leaderboard() {
       setLoading(true);
       console.log('Loading leaderboard for tab:', activeTab);
 
-      // First, let's get all profiles to see what data we have
-      const { data: allProfiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, email, pulse_level, avatar_url')
-        .order('pulse_level', { ascending: false });
-
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-        throw profilesError;
-      }
-
-      console.log('All profiles:', allProfiles);
-
       let query = supabase
         .from('profiles')
-        .select('id, email, pulse_level, avatar_url')
+        .select('id, email, pulse_level')
         .order('pulse_level', { ascending: false });
 
       let friendIds: string[] = [];
@@ -231,6 +217,7 @@ export default function Leaderboard() {
         </TabsContent>
 
         <TabsContent value="friends" className="mt-4">
+          {/* Same content structure as global tab */}
           <div className="space-y-6">
             {/* Top 5 Friends */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
