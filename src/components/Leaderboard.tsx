@@ -21,10 +21,10 @@ interface LeaderboardSectionProps {
 function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, currentUserId, showEmptyMessage }: LeaderboardSectionProps) {
   if (showEmptyMessage) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-        <div className="text-center py-8">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sm:p-6">
+        <div className="text-center py-6 sm:py-8">
           <Users className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
-          <p className="text-slate-600 dark:text-slate-400 text-lg">
+          <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
             Add some friends on Pulse to start competing and earning prizes!
           </p>
         </div>
@@ -33,42 +33,41 @@ function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, curr
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Top 5 Users */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">{title}</h2>
-        <div className="space-y-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-4">{title}</h2>
+        <div className="space-y-3 sm:space-y-4">
           {topUsers.map((user, index) => (
             <div
               key={user.id}
-              className={`flex items-center justify-between p-4 rounded-lg transition-colors ${
+              className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-colors ${
                 user.id === currentUserId
                   ? 'bg-rose-500/10 dark:bg-rose-500/20'
                   : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
+              <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white text-sm sm:text-base font-bold flex-shrink-0">
                   {index + 1}
                 </div>
-                <div>
-                  <div className="font-medium text-slate-900 dark:text-white">
+                <div className="min-w-0">
+                  <div className="font-medium text-slate-900 dark:text-white text-sm sm:text-base truncate">
                     {user.email}
                     {user.id === currentUserId && (
-                      <span className="ml-2 text-rose-500">
-                        <Star className="w-4 h-4 inline" />
+                      <span className="ml-2 text-rose-500 whitespace-nowrap">
+                        <Star className="w-3 h-3 sm:w-4 sm:h-4 inline" />
                         You
                       </span>
                     )}
                   </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400">Level {user.pulse_level}</div>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                {index === 0 && <Trophy className="w-5 h-5 text-yellow-500" />}
-                {index === 1 && <Medal className="w-5 h-5 text-gray-400" />}
-                {index === 2 && <Medal className="w-5 h-5 text-amber-600" />}
-                <div className="text-rose-500 font-bold">{user.pulse_level}</div>
+              <div className="flex items-center space-x-2 ml-2 sm:ml-4 flex-shrink-0">
+                {index === 0 && <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500" />}
+                {index === 1 && <Medal className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />}
+                {index === 2 && <Medal className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />}
+                <div className="text-rose-500 font-bold text-sm sm:text-base">{user.pulse_level}</div>
               </div>
             </div>
           ))}
@@ -77,42 +76,41 @@ function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, curr
 
       {/* User's Position and Neighbors */}
       {currentUserId && userPosition && userPosition > 5 && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-          <div className="flex justify-center mb-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-4 sm:p-6">
+          <div className="flex justify-center mb-3 sm:mb-4">
             <div className="text-slate-400 dark:text-slate-500">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {userNeighbors.map((neighbor, index) => (
               <div
                 key={neighbor.id}
-                className={`flex items-center justify-between p-4 rounded-lg transition-colors ${
+                className={`flex items-center justify-between p-3 sm:p-4 rounded-lg transition-colors ${
                   neighbor.id === currentUserId
                     ? 'bg-rose-500/10 dark:bg-rose-500/20'
                     : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}
               >
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white font-bold">
+                <div className="flex items-center space-x-3 sm:space-x-4 min-w-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 flex items-center justify-center text-white text-sm sm:text-base font-bold flex-shrink-0">
                     {userPosition - 1 + index}
                   </div>
-                  <div>
-                    <div className="font-medium text-slate-900 dark:text-white">
+                  <div className="min-w-0">
+                    <div className="font-medium text-slate-900 dark:text-white text-sm sm:text-base truncate">
                       {neighbor.email}
                       {neighbor.id === currentUserId && (
-                        <span className="ml-2 text-rose-500">
-                          <Star className="w-4 h-4 inline" />
+                        <span className="ml-2 text-rose-500 whitespace-nowrap">
+                          <Star className="w-3 h-3 sm:w-4 sm:h-4 inline" />
                           You
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-slate-500 dark:text-slate-400">Level {neighbor.pulse_level}</div>
                   </div>
                 </div>
-                <div className="text-rose-500 font-bold">{neighbor.pulse_level}</div>
+                <div className="text-rose-500 font-bold text-sm sm:text-base ml-2 sm:ml-4 flex-shrink-0">{neighbor.pulse_level}</div>
               </div>
             ))}
           </div>
@@ -236,11 +234,11 @@ export default function Leaderboard() {
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       {/* Global Leaderboard */}
-      <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-xl p-8">
-        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 flex items-center">
-          <Trophy className="w-8 h-8 text-yellow-500 mr-3" />
+      <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-xl p-4 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-6 sm:mb-8 flex items-center">
+          <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500 mr-2 sm:mr-3" />
           Global Leaderboard
         </h2>
         <LeaderboardSection
@@ -254,9 +252,9 @@ export default function Leaderboard() {
 
       {/* Friends Leaderboard */}
       {user && (
-        <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-xl p-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 flex items-center">
-            <Users className="w-8 h-8 text-rose-500 mr-3" />
+        <div className="bg-gradient-to-b from-white to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-xl p-4 sm:p-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-6 sm:mb-8 flex items-center">
+            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-rose-500 mr-2 sm:mr-3" />
             Friends Leaderboard
           </h2>
           <LeaderboardSection
