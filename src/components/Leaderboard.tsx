@@ -27,12 +27,15 @@ export default function Leaderboard() {
       setLoading(true);
       console.log('Loading leaderboard for tab:', activeTab);
 
-      let query = supabase
+      // Base query for profiles
+      const baseQuery = supabase
         .from('profiles')
         .select('id, email, pulse_level')
         .order('pulse_level', { ascending: false });
 
+      let query = baseQuery;
       let friendIds: string[] = [];
+      
       // If in friends tab, filter for friends only
       if (activeTab === 'friends' && user) {
         // First get all friend IDs
@@ -54,7 +57,7 @@ export default function Leaderboard() {
         }
 
         console.log('Friend IDs:', friendIds);
-        query = query.in('id', friendIds);
+        query = baseQuery.in('id', friendIds);
       }
 
       // Get top 5 users
@@ -105,7 +108,7 @@ export default function Leaderboard() {
         setUserPosition(userRank);
 
         // Get neighbors (2 above and 2 below)
-        let neighborsQuery = query;
+        let neighborsQuery = baseQuery;
         if (activeTab === 'friends') {
           neighborsQuery = neighborsQuery.in('id', friendIds);
         }
