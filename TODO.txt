@@ -1,31 +1,44 @@
 # Pulse Web App - TODO List
 
 ## Current Issues
-- queue_user_notifications() is reading 'active_users' from all profiles and not just friends.
+✓ queue_user_notifications() is reading 'active_users' from all profiles and not just friends.
 ✓ Migrations folder is clogged with unnecessary code.
+✓ Password reset function not working
 
 ## Planned Features
-✓ Password reset and change features.
-✓ Switch to a dedicated email
-- Personalise decay aggression 
-✓ Adapt emails for mobile and dark mode compatibility
-- Send photos to friends system (BeReal-like system)
-- Incorporate Apple Watch features 
+
+### Phase 1 - Core Exercise Features
+- Mobile app port?
+- Pulse leaderboard? (Global and friends only)
+- More detailed accounts, usernames, locations, profile pics etc.
 - Exercise tracking with minimum requirements for pulse updates
+- Personalise decay aggression 
 - Badges for exercise achievements
+- Pie chart to show contribution from different exercise types/routines
+
+### Phase 2 - Social Features
+- Send photos to friends system (BeReal-like system)
 - Friends can prompt each other with snarky messages
+- Tag people you are exercising with
+- See where your friends are exercising
+
+### Phase 3 - Location & Discovery
 - Geo location
     - See how long people have been at their exercise location/home, prompt to get started exercising if they are in one place for a long time?
-- During the gym downtime between sets provide games? encourage friends? scroll posts? etc...
-- Integration with Superapps like WeChat and other existing social media platforms.
-- Target weekend running clubs... 
-- See where your friends are exercising
-- Tag people you are exercising with
 - Pokemon Go style check your map to see exercise options around you and records/what people have done it recently
     - See hotspots to exercise???
-- Pie chart to show contribution from different exercise types/routines
-- uizard.com?
+
+### Phase 4 - Device Integration
+- Incorporate Apple Watch features 
+- Integration with Superapps like WeChat and other existing social media platforms
+
+### Phase 5 - Gamification & Engagement
+- During the gym downtime between sets provide games? encourage friends? scroll posts? etc...
+- Target weekend running clubs... 
 - Adaptive notifications that track common workout times.
+
+### Phase 6 - UI/UX Improvements
+- uizard.com?
 
 ## Bug Fixes
 ✓ Fix friends feature formatting - DONE
@@ -38,6 +51,7 @@
 ✓ Port to web app (Next.js and deploy on Vercel) - DONE
 ✓ Notification heart picture with colour changing - DONE
 ✓ Timezone adjustment - DONE
+- Fix progress tab of the app.
 
 ## Notes
 - Use this file to track features, bugs, and improvements
