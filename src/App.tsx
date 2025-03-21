@@ -30,7 +30,6 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import Leaderboard from './components/Leaderboard';
 import LeaderboardPage from './pages/LeaderboardPage';
 
 // Add this near your other interfaces/types
