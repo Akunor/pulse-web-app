@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 export function DeleteAccount() {
+  const { user } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
 
   const handleDeleteAccount = async () => {
+    if (!user?.id) {
+      toast.error('User not found');
+      return;
+    }
+
     if (confirmationText !== 'DELETE') {
       toast.error('Please type DELETE to confirm');
       return;
@@ -16,11 +23,26 @@ export function DeleteAccount() {
 
     setIsDeleting(true);
     try {
-      // Call the delete_user_account function
-      const { data, error } = await supabase
-        .rpc('delete_user_account');
+      // First, verify the function exists
+      const { data: functionExists, error: functionCheckError } = await supabase
+        .from('pg_proc')
+        .select('proname')
+        .eq('proname', 'delete_user_account')
+        .single();
 
-      if (error) throw error;
+      if (functionCheckError) {
+        console.error('Function check error:', functionCheckError);
+        throw new Error('Database function not found');
+      }
+
+      // Call the delete_user_account function with the user ID
+      const { data, error } = await supabase
+        .rpc('delete_user_account', { user_id: user.id });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       if (data) {
         toast.success('Account deleted successfully');
