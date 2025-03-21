@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ResetPasswordForm } from '../components/ResetPasswordForm';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import { Logo } from '../components/Logo';
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -54,17 +55,25 @@ export default function ResetPasswordPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl w-full max-w-md text-center">
-          <p className="text-slate-900 dark:text-white">Loading...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl w-full max-w-md text-center shadow-lg">
+          <Logo className="w-24 h-24 text-rose-500 mx-auto mb-6" variant="main" />
+          <p className="text-slate-900 dark:text-white text-lg">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center p-4">
-      <ResetPasswordForm onSuccess={handleSuccess} />
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <Logo className="w-24 h-24 text-rose-500 mx-auto mb-4" variant="main" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Reset Password</h1>
+          <p className="text-slate-600 dark:text-slate-400">Enter your new password below</p>
+        </div>
+        <ResetPasswordForm onSuccess={handleSuccess} />
+      </div>
     </div>
   );
 } 
