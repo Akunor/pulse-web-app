@@ -10,7 +10,8 @@ import {
   Check,
   Settings as SettingsIcon,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Trophy
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -27,6 +28,7 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import Leaderboard from './components/Leaderboard';
 
 // Add this near your other interfaces/types
 interface BirthdayRange {
@@ -196,6 +198,10 @@ function AppContent() {
               <div className="bg-white dark:bg-slate-800 rounded-xl p-6">
                 <FriendsList />
               </div>
+            </div>
+
+            <div className="mt-8">
+              <Leaderboard />
             </div>
           </div>
         );

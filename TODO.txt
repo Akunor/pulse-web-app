@@ -51,7 +51,7 @@
 ✓ Port to web app (Next.js and deploy on Vercel) - DONE
 ✓ Notification heart picture with colour changing - DONE
 ✓ Timezone adjustment - DONE
-- Fix progress tab of the app.
+✓ Fix progress tab of the app.
 
 ## Notes
 - Use this file to track features, bugs, and improvements
