@@ -190,113 +190,121 @@ export function Progress() {
           <h2 className="text-xl font-bold text-slate-900 dark:text-white">Progress Overview</h2>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center">
-            <Activity className="w-6 h-6 mr-2 text-rose-500" />
-            Overall Stats
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
-              <p className="text-sm text-rose-600 dark:text-rose-400">Total Workouts</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalWorkouts}</p>
-            </div>
-            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
-              <p className="text-sm text-rose-600 dark:text-rose-400">Total Minutes</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalMinutes}</p>
-            </div>
-            <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
-              <p className="text-sm text-rose-600 dark:text-rose-400">Calories Burned</p>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalCalories}</p>
-            </div>
-            <div className="bg-rose-100 dark:bg-slate-700 p-4 rounded-lg border-2 border-rose-500 dark:border-rose-400">
+        <div className="max-w-4xl mx-auto">
+          {/* Highest Pulse Card */}
+          <div className="bg-rose-100 dark:bg-slate-700 p-6 rounded-lg border-2 border-rose-500 dark:border-rose-400 mb-6">
+            <div className="text-center">
               <p className="text-sm text-rose-600 dark:text-rose-400 font-semibold">Highest Pulse</p>
-              <p className="text-3xl font-bold text-rose-600 dark:text-rose-400">{stats.bestStreak}</p>
+              <p className="text-4xl font-bold text-rose-600 dark:text-rose-400">{stats.bestStreak}</p>
               <div className="mt-2 pt-2 border-t border-rose-200 dark:border-slate-600">
-                <p className="text-xs text-slate-600 dark:text-slate-400">Current Pulse</p>
-                <p className="text-lg text-slate-700 dark:text-slate-300">{stats.currentPulse}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Current Pulse</p>
+                <p className="text-xl text-slate-700 dark:text-slate-300">{stats.currentPulse}</p>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Weekly Stats */}
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Calendar className="w-5 h-5 text-rose-400" />
-              <h3 className="text-slate-900 dark:text-white font-semibold">This Week</h3>
-            </div>
-            <div className="space-y-2">
-              <p className="text-slate-700 dark:text-slate-300">Workouts: {stats.weeklyStats.workouts}</p>
-              <p className="text-slate-700 dark:text-slate-300">Avg Duration: {Math.round(stats.weeklyStats.averageDuration)} mins</p>
-              <p className="text-slate-700 dark:text-slate-300">Rest Days: {stats.weeklyStats.restDays}</p>
+          {/* Overall Stats */}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center">
+              <Activity className="w-6 h-6 mr-2 text-rose-500" />
+              Overall Stats
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+                <p className="text-sm text-rose-600 dark:text-rose-400">Total Workouts</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalWorkouts}</p>
+              </div>
+              <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+                <p className="text-sm text-rose-600 dark:text-rose-400">Total Minutes</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalMinutes}</p>
+              </div>
+              <div className="bg-rose-50 dark:bg-slate-700/50 p-4 rounded-lg border border-rose-100 dark:border-slate-600">
+                <p className="text-sm text-rose-600 dark:text-rose-400">Calories Burned</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalCalories}</p>
+              </div>
             </div>
           </div>
 
-          {/* Monthly Stats */}
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Activity className="w-5 h-5 text-rose-400" />
-              <h3 className="text-slate-900 dark:text-white font-semibold">This Month</h3>
+          {/* Rest of the stats grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Weekly Stats */}
+            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <Calendar className="w-5 h-5 text-rose-400" />
+                <h3 className="text-slate-900 dark:text-white font-semibold">This Week</h3>
+              </div>
+              <div className="space-y-2">
+                <p className="text-slate-700 dark:text-slate-300">Workouts: {stats.weeklyStats.workouts}</p>
+                <p className="text-slate-700 dark:text-slate-300">Avg Duration: {Math.round(stats.weeklyStats.averageDuration)} mins</p>
+                <p className="text-slate-700 dark:text-slate-300">Rest Days: {stats.weeklyStats.restDays}</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <p className="text-slate-700 dark:text-slate-300">Workouts: {stats.monthlyStats.workouts}</p>
-              <p className="text-slate-700 dark:text-slate-300">Avg Duration: {Math.round(stats.monthlyStats.averageDuration)} mins</p>
-              <p className="text-slate-700 dark:text-slate-300">Rest Days: {stats.monthlyStats.restDays}</p>
+
+            {/* Monthly Stats */}
+            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <Activity className="w-5 h-5 text-rose-400" />
+                <h3 className="text-slate-900 dark:text-white font-semibold">This Month</h3>
+              </div>
+              <div className="space-y-2">
+                <p className="text-slate-700 dark:text-slate-300">Workouts: {stats.monthlyStats.workouts}</p>
+                <p className="text-slate-700 dark:text-slate-300">Avg Duration: {Math.round(stats.monthlyStats.averageDuration)} mins</p>
+                <p className="text-slate-700 dark:text-slate-300">Rest Days: {stats.monthlyStats.restDays}</p>
+              </div>
+            </div>
+
+            {/* Averages */}
+            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <Target className="w-5 h-5 text-rose-400" />
+                <h3 className="text-slate-900 dark:text-white font-semibold">Averages</h3>
+              </div>
+              <div className="space-y-2">
+                <p className="text-slate-700 dark:text-slate-300">Workouts per Week: {stats.averageWorkoutsPerWeek.toFixed(1)}</p>
+                <p className="text-slate-700 dark:text-slate-300">Rest Days per Week: {stats.averageRestDaysPerWeek.toFixed(1)}</p>
+                <p className="text-slate-700 dark:text-slate-300">Most Active Day: {stats.mostActiveDay}</p>
+              </div>
             </div>
           </div>
 
-          {/* Averages */}
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Target className="w-5 h-5 text-rose-400" />
-              <h3 className="text-slate-900 dark:text-white font-semibold">Averages</h3>
+          {/* Workout Types Pie Chart */}
+          <div className="mt-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <Award className="w-5 h-5 text-rose-400" />
+              <h3 className="text-slate-900 dark:text-white font-semibold">Workout Types</h3>
             </div>
-            <div className="space-y-2">
-              <p className="text-slate-700 dark:text-slate-300">Workouts per Week: {stats.averageWorkoutsPerWeek.toFixed(1)}</p>
-              <p className="text-slate-700 dark:text-slate-300">Rest Days per Week: {stats.averageRestDaysPerWeek.toFixed(1)}</p>
-              <p className="text-slate-700 dark:text-slate-300">Most Active Day: {stats.mostActiveDay}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Workout Types Pie Chart */}
-        <div className="mt-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Award className="w-5 h-5 text-rose-400" />
-            <h3 className="text-slate-900 dark:text-white font-semibold">Workout Types</h3>
-          </div>
-          <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-6">
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={Object.entries(stats.workoutTypes).map(([name, value]) => ({ name, value }))}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {Object.entries(stats.workoutTypes).map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`}
-                        fill={index === 0 ? '#f43f5e' : index === 1 ? '#fb923c' : index === 2 ? '#fbbf24' : '#34d399'}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0.5rem',
-                      color: '#1f2937'
-                    }}
-                    formatter={(value: number) => [`${value} workouts`, '']}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-4">
+              <div className="h-[250px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={Object.entries(stats.workoutTypes).map(([name, value]) => ({ name, value }))}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {Object.entries(stats.workoutTypes).map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`}
+                          fill={index === 0 ? '#f43f5e' : index === 1 ? '#fb923c' : index === 2 ? '#fbbf24' : '#34d399'}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'white', 
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '0.5rem',
+                        color: '#1f2937'
+                      }}
+                      formatter={(value: number, name: string) => [`${value} workouts`, name]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         </div>
