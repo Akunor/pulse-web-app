@@ -98,6 +98,7 @@ export default function Leaderboard() {
   const [friendsUserPosition, setFriendsUserPosition] = useState<number | null>(null);
   const [friendsUserNeighbors, setFriendsUserNeighbors] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -107,42 +108,60 @@ export default function Leaderboard() {
   async function loadLeaderboards() {
     try {
       setLoading(true);
+      setError(null);
       
       // Load global leaderboard
+      console.log('Loading global leaderboard...');
       await loadGlobalLeaderboard();
+      console.log('Global leaderboard loaded successfully');
       
       // Load friends leaderboard
       if (user) {
+        console.log('Loading friends leaderboard...');
         await loadFriendsLeaderboard();
+        console.log('Friends leaderboard loaded successfully');
       }
     } catch (error) {
       console.error('Error loading leaderboards:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load leaderboards');
     } finally {
       setLoading(false);
     }
   }
 
   async function loadGlobalLeaderboard() {
+    console.log('Fetching all users for global leaderboard...');
     // Get all users sorted by pulse_level
     const { data: allUsers, error: allUsersError } = await supabase
       .from('profiles')
       .select('id, email, pulse_level')
       .order('pulse_level', { ascending: false });
 
-    if (allUsersError) throw allUsersError;
+    if (allUsersError) {
+      console.error('Error fetching all users:', allUsersError);
+      throw allUsersError;
+    }
+
+    console.log('Fetched users:', allUsers?.length || 0);
+    console.log('First few users:', allUsers?.slice(0, 3));
 
     // Set top 5 users
-    setGlobalTopUsers(allUsers.slice(0, 5));
+    const topUsers = allUsers?.slice(0, 5) || [];
+    console.log('Setting top users:', topUsers);
+    setGlobalTopUsers(topUsers);
 
     // If user is logged in, get their position and neighbors
     if (user) {
-      const userRank = allUsers.findIndex(u => u.id === user.id) + 1;
+      const userRank = allUsers?.findIndex(u => u.id === user.id) + 1 || 0;
+      console.log('User rank:', userRank);
       setGlobalUserPosition(userRank);
 
       if (userRank > 5) {
         const startIndex = Math.max(0, userRank - 3);
-        const endIndex = Math.min(allUsers.length, userRank + 1);
-        setGlobalUserNeighbors(allUsers.slice(startIndex, endIndex));
+        const endIndex = Math.min(allUsers?.length || 0, userRank + 1);
+        const neighbors = allUsers?.slice(startIndex, endIndex) || [];
+        console.log('Setting user neighbors:', neighbors);
+        setGlobalUserNeighbors(neighbors);
       }
     }
   }
@@ -189,6 +208,14 @@ export default function Leaderboard() {
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500 mx-auto"></div>
         <p className="mt-2 text-slate-600 dark:text-slate-400">Loading leaderboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-500">Error: {error}</p>
       </div>
     );
   }
