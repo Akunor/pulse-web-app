@@ -5,12 +5,13 @@
 ✓ Migrations folder is clogged with unnecessary code.
 ✓ Password reset function not working
 ✓ Leaderboard not displaying properly
-- Workouts on main page and on dedicated page need to be separate components.
+✓ Workouts on main page and on dedicated page need to be separate components.
 
 ## Planned Features
 
 ### Phase 1 - Core Exercise Features
 - Mobile app port?
+- Personal progress bar/rewards for reaching Pulse milestones.
 ✓ Pulse leaderboard? (Global and friends only)
 - More detailed accounts, usernames, locations, profile pics etc.
 - Exercise tracking with minimum requirements for pulse updates

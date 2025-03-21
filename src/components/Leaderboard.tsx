@@ -18,6 +18,11 @@ interface LeaderboardSectionProps {
   showEmptyMessage?: boolean;
 }
 
+// Helper function to truncate email
+function truncateEmail(email: string): string {
+  return email.split('@')[0];
+}
+
 function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, currentUserId, showEmptyMessage }: LeaderboardSectionProps) {
   if (showEmptyMessage) {
     return (
@@ -53,7 +58,7 @@ function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, curr
                 </div>
                 <div className="min-w-0">
                   <div className="font-medium text-slate-900 dark:text-white text-sm sm:text-base truncate">
-                    {user.email}
+                    {truncateEmail(user.email)}
                     {user.id === currentUserId && (
                       <span className="ml-2 text-rose-500 whitespace-nowrap">
                         <Star className="w-3 h-3 sm:w-4 sm:h-4 inline" />
@@ -100,7 +105,7 @@ function LeaderboardSection({ title, topUsers, userPosition, userNeighbors, curr
                   </div>
                   <div className="min-w-0">
                     <div className="font-medium text-slate-900 dark:text-white text-sm sm:text-base truncate">
-                      {neighbor.email}
+                      {truncateEmail(neighbor.email)}
                       {neighbor.id === currentUserId && (
                         <span className="ml-2 text-rose-500 whitespace-nowrap">
                           <Star className="w-3 h-3 sm:w-4 sm:h-4 inline" />
