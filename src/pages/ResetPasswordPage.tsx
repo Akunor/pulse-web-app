@@ -28,14 +28,11 @@ export default function ResetPasswordPage() {
         // First, sign out any existing session
         await supabase.auth.signOut();
 
-        // Then verify the recovery token
-        const { error } = await supabase.auth.verifyOtp({
-          token,
-          type: 'recovery'
-        });
+        // Then exchange the recovery token for a session
+        const { error } = await supabase.auth.exchangeCodeForSession(token);
 
         if (error) {
-          console.error('Verification error:', error);
+          console.error('Exchange error:', error);
           throw error;
         }
 
