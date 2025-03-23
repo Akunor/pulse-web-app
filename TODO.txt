@@ -46,6 +46,7 @@
 ## Bug Fixes
 ✓ Fix friends feature formatting - DONE
 ✓ Fix decay to not lose Pulse if they exercised on a day but there was a larger rest break (i.e. Update last workout date before updating the Pulse) - DONE
+* queue_user_notifications() not adding notifications to the queue issue fixed.
 
 ## Improvements
 ✓ Friends features - DONE

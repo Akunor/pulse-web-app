@@ -45,6 +45,29 @@ BEGIN
     WHERE f.user_id = user_record.id
     AND p.last_workout_at > NOW() - INTERVAL '24 hours';
     
+    -- Log active friend count calculation
+    INSERT INTO debug_logs (function_name, message, details)
+    VALUES (
+      'queue_user_notifications',
+      'Active friend count calculation',
+      jsonb_build_object(
+        'email', user_record.email,
+        'active_friend_count', active_friend_count,
+        'active_friend_count_type', pg_typeof(active_friend_count)::text,
+        'query_result', (
+          SELECT jsonb_build_object(
+            'count', COUNT(*),
+            'friend_ids', array_agg(p.id),
+            'last_workouts', array_agg(p.last_workout_at)
+          )
+          FROM friendships f
+          JOIN profiles p ON p.id = f.friend_id
+          WHERE f.user_id = user_record.id
+          AND p.last_workout_at > NOW() - INTERVAL '24 hours'
+        )
+      )
+    );
+    
     -- Log user being processed
     INSERT INTO debug_logs (function_name, message, details)
     VALUES (
@@ -83,12 +106,16 @@ BEGIN
     
     -- Check if it's within 5 minutes of notification time (±5 minute window)
     IF minute_diff <= 5 THEN
-      -- Log notification attempt
+      -- Log notification attempt with active friend count
       INSERT INTO debug_logs (function_name, message, details)
       VALUES (
         'queue_user_notifications',
         'Attempting to queue notification',
-        jsonb_build_object('email', user_record.email)
+        jsonb_build_object(
+          'email', user_record.email,
+          'active_friend_count', active_friend_count,
+          'active_friend_count_type', pg_typeof(active_friend_count)::text
+        )
       );
       
       -- Insert notification into queue if not already queued for today
@@ -111,7 +138,7 @@ BEGIN
           false
         ),
         user_record.pulse_level,
-        to_jsonb(active_friend_count),
+        to_jsonb(COALESCE(active_friend_count, 0)),  -- Convert to JSONB
         user_record.streak_days
       WHERE NOT EXISTS (
         SELECT 1 FROM notification_queue
@@ -120,20 +147,28 @@ BEGIN
             DATE(NOW() AT TIME ZONE COALESCE(user_record.timezone, 'UTC'))
       );
       
-      -- Log notification result
+      -- Log notification result with active friend count
       IF FOUND THEN
         INSERT INTO debug_logs (function_name, message, details)
         VALUES (
           'queue_user_notifications',
           'Successfully queued notification',
-          jsonb_build_object('email', user_record.email)
+          jsonb_build_object(
+            'email', user_record.email,
+            'active_friend_count', active_friend_count,
+            'active_friend_count_type', pg_typeof(active_friend_count)::text
+          )
         );
       ELSE
         INSERT INTO debug_logs (function_name, message, details)
         VALUES (
           'queue_user_notifications',
           'Did not queue notification (possible duplicate)',
-          jsonb_build_object('email', user_record.email)
+          jsonb_build_object(
+            'email', user_record.email,
+            'active_friend_count', active_friend_count,
+            'active_friend_count_type', pg_typeof(active_friend_count)::text
+          )
         );
       END IF;
     ELSE
