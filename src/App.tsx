@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Dumbbell, 
   Calendar as CalendarIcon, 
   LineChart, 
   User,
-  Activity,
   LogOut,
-  Copy,
-  Check,
   Settings as SettingsIcon,
   CheckCircle,
   AlertCircle,
   Trophy,
   Menu,
-  X
+  X,
+  Activity,
+  Copy,
+  Check
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -21,7 +21,6 @@ import { AuthModal } from './components/AuthModal';
 import { FriendsList } from './components/FriendsList';
 import { WorkoutMini } from './components/WorkoutMini';
 import { WorkoutPage } from './components/WorkoutPage';
-import { WorkoutHistory } from './components/WorkoutHistory';
 import { Calendar } from './components/Calendar';
 import { Progress } from './components/Progress';
 import { Settings } from './components/Settings';
@@ -30,15 +29,9 @@ import { Logo } from './components/Logo';
 import { supabase } from './lib/supabase';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import LeaderboardPage from './pages/LeaderboardPage';
-
-// Add this near your other interfaces/types
-interface BirthdayRange {
-  start: Date;
-  end: Date;
-}
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -49,10 +42,7 @@ function AppContent() {
     lastWorkout: null,
     restDayUsed: false
   });
-  const [copied, setCopied] = useState(false);
   const { user, signOut } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
   
   // Add effect to handle auth modal flag
   useEffect(() => {
@@ -94,18 +84,6 @@ function AppContent() {
       toast.success('Signed out successfully');
     } catch (error) {
       toast.error('Failed to sign out');
-    }
-  };
-
-  const copyUserId = async () => {
-    if (!user?.id) return;
-    try {
-      await navigator.clipboard.writeText(user.id);
-      setCopied(true);
-      toast.success('User ID copied to clipboard');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      toast.error('Failed to copy ID');
     }
   };
 
