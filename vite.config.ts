@@ -21,7 +21,6 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env.SUPABASE_URL': JSON.stringify(env.SUPABASE_URL),
-      'process.env.SUPABASE_SERVICE_ROLE_KEY': JSON.stringify(env.SUPABASE_SERVICE_ROLE_KEY),
       'process.env.VITE_APP_TITLE': JSON.stringify(env.VITE_APP_TITLE),
       'process.env.VITE_WEBAPP_URL': JSON.stringify(env.VITE_WEBAPP_URL)
     },
