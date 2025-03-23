@@ -20,9 +20,10 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      'process.env.SUPABASE_URL': JSON.stringify(env.SUPABASE_URL),
-      'process.env.VITE_APP_TITLE': JSON.stringify(env.VITE_APP_TITLE),
-      'process.env.VITE_WEBAPP_URL': JSON.stringify(env.VITE_WEBAPP_URL)
+      'import.meta.env.SUPABASE_URL': JSON.stringify(env.SUPABASE_URL),
+      'import.meta.env.SUPABASE_ANON_KEY': JSON.stringify(env.SUPABASE_ANON_KEY),
+      'import.meta.env.VITE_APP_TITLE': JSON.stringify(env.VITE_APP_TITLE),
+      'import.meta.env.VITE_WEBAPP_URL': JSON.stringify(env.VITE_WEBAPP_URL)
     },
     build: {
       rollupOptions: {
