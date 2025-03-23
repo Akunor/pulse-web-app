@@ -16,37 +16,11 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
+  status = 200 
+   atus = 200
 
 [build.processing]
   skip_processing = false
 
 [build.processing.html]
   pretty_urls = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.images]
-  compress = true
-
-[build.processing.skip_processing]
-  - "*.js"
-  - "*.css"
-  - "*.html"
-  - "*.png"
-  - "*.jpg"
-  - "*.gif"
-  - "*.ico"
-  - "*.svg"
-  - "*.woff"
-  - "*.woff2"
-  - "*.ttf"
-  - "*.eot"
-  - "*.json"
-  - "*.map" 
