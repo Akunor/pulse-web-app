@@ -4,19 +4,19 @@ import { createClient } from '@supabase/supabase-js';
 console.log('Environment check:', {
   hasProcessEnv: typeof process !== 'undefined',
   envKeys: Object.keys(process.env || {}),
-  supabaseUrl: process.env.VITE_SUPABASE_URL,
-  supabaseKey: process.env.VITE_SUPABASE_ANON_KEY ? 'present' : 'missing'
+  supabaseUrl: import.meta.env.SUPABASE_URL,
+  supabaseKey: import.meta.env.SUPABASE_SERVICE_ROLE_KEY ? 'present' : 'missing'
 });
 
-if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
   console.error('Missing Supabase environment variables:', {
-    url: process.env.VITE_SUPABASE_URL ? 'present' : 'missing',
-    key: process.env.VITE_SUPABASE_ANON_KEY ? 'present' : 'missing'
+    url: supabaseUrl ? 'present' : 'missing',
+    key: supabaseKey ? 'present' : 'missing'
   });
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
-);
+export const supabase = createClient(supabaseUrl, supabaseKey);
