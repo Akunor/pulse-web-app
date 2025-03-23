@@ -32,6 +32,27 @@ import { format } from 'date-fns';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import { ErrorBoundary } from 'react-error-boundary';
+import { Toaster } from 'react-hot-toast';
+
+function ErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 dark:bg-slate-900">
+      <div className="rounded-lg bg-white p-8 shadow-lg dark:bg-slate-800">
+        <h2 className="mb-4 text-2xl font-bold text-red-600">Something went wrong</h2>
+        <pre className="mb-4 rounded bg-slate-100 p-4 text-sm dark:bg-slate-700">
+          {error.message}
+        </pre>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+        >
+          Reload page
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -406,12 +427,14 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="*" element={<AppContent />} />
-      </Routes>
-    </Router>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Router>
+        <Routes>
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="*" element={<AppContent />} />
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
