@@ -1,6 +1,6 @@
 import logoMain from '../assets/logo-main.png';
 import logoSmall from '../assets/logo-small.png';
-import logoSmallGrey from '../assets/logo-small-grey.png';
+import logoSmallGrey from '../assets/logo-small-greyed.png';
 
 interface LogoProps {
   className?: string;
