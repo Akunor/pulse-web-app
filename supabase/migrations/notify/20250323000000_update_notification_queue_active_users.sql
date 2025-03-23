@@ -12,7 +12,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
-  user_record profiles%ROWTYPE;
+  user_record RECORD;
   user_local_time timestamp with time zone;
   preferred_minute integer;
   current_minute integer;
@@ -116,7 +116,8 @@ BEGIN
       WHERE NOT EXISTS (
         SELECT 1 FROM notification_queue
         WHERE user_id = user_record.id
-        AND DATE(created_at) = CURRENT_DATE
+        AND DATE(created_at AT TIME ZONE COALESCE(user_record.timezone, 'UTC')) = 
+            DATE(NOW() AT TIME ZONE COALESCE(user_record.timezone, 'UTC'))
       );
       
       -- Log notification result
