@@ -15,5 +15,5 @@ export default defineConfig({
       'next/server': 'next/dist/server',
       'next': 'next/dist'
     },
-  },
+  }
 });
