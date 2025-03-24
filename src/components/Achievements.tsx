@@ -82,7 +82,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
             {/* Achievement Progress Bar */}
             <div className="mt-8 relative">
               {/* Main progress bar - only extends to giftbox */}
-              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden" style={{ width: '85%' }}>
+              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden" style={{ width: '82%' }}>
                 <div 
                   className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
                   style={{ 
@@ -98,7 +98,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 <div 
                   className="absolute top-0 h-2 flex items-center"
                   style={{ 
-                    left: '85%',
+                    left: '82%',
                     right: '15%'
                   }}
                 >
@@ -106,7 +106,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                     {[...Array(6)].map((_, i) => (
                       <div
                         key={i}
-                        className="h-2 w-1 bg-rose-200 dark:bg-slate-600 rounded-full"
+                        className="h-2 w-1.5 bg-rose-200 dark:bg-slate-600 rounded-full"
                       />
                     ))}
                   </div>
@@ -114,7 +114,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
               )}
               
               {/* Achievement Icons - positioned over the bar */}
-              <div className="absolute -top-2 left-0 right-0 flex items-center">
+              <div className="absolute -top-0 left-0 right-0 flex items-center">
                 {/* Last Unlocked Achievement */}
                 {lastUnlocked && (
                   <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
@@ -126,7 +126,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next Achievement */}
                 {nextMilestone && (
-                  <div className="flex flex-col items-center absolute" style={{ right: '15%' }}>
+                  <div className="flex flex-col items-center absolute" style={{ right: '18%' }}>
                     <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center shadow-md">
                       <span className="text-xl">🎁</span>
                     </div>
@@ -148,7 +148,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 {/* Last Unlocked Achievement Label */}
                 {lastUnlocked && (
                   <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
-                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                    <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {lastUnlocked.name}
                     </span>
                   </div>
@@ -156,8 +156,8 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next Achievement Label */}
                 {nextMilestone && (
-                  <div className="flex flex-col items-center absolute" style={{ right: '15%' }}>
-                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-col items-center absolute" style={{ right: '18%' }}>
+                    <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {nextMilestone.name}
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 {/* Next-Next Achievement Label */}
                 {nextNextMilestone && (
                   <div className="flex flex-col items-center absolute" style={{ right: '-16px' }}>
-                    <span className="text-xs text-slate-400 dark:text-slate-500">
+                    <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
                       ???
                     </span>
                   </div>
