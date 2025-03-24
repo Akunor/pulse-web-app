@@ -147,7 +147,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
               <div className="absolute -bottom-6 left-0 right-0 flex items-center">
                 {/* Last Unlocked Achievement Label */}
                 {lastUnlocked && (
-                  <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
+                  <div className="flex flex-col items-center" style={{ marginLeft: '0px' }}>
                     <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {lastUnlocked.required_pulse}
                     </span>
@@ -165,7 +165,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next-Next Achievement Label */}
                 {nextNextMilestone && (
-                  <div className="flex flex-col items-center absolute" style={{ right: '-16px' }}>
+                  <div className="flex flex-col items-center absolute" style={{ right: '-8px' }}>
                     <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
                       {nextNextMilestone.required_pulse}
                     </span>
