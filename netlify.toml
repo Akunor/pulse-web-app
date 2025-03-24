@@ -9,6 +9,8 @@
 [functions]
   node_bundler = "esbuild"
   included_files = ["package.json", "package-lock.json"]
+
+[functions.process-notifications]
   timeout = 30
 
 [build.environment]
