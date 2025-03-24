@@ -93,22 +93,27 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 {/* Dashed line for gap to locked achievement */}
                 {nextMilestone && nextNextMilestone && (
                   <div 
-                    className="h-full border-r-2 border-dashed border-rose-300 dark:border-slate-500"
+                    className="absolute top-0 bottom-0 flex items-center"
                     style={{ 
-                      position: 'absolute',
                       left: '85%',
-                      top: 0,
-                      bottom: 0
+                      gap: '4px'
                     }}
-                  />
+                  >
+                    {[...Array(6)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-1 w-1 bg-rose-300 dark:bg-slate-500 rounded-full"
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
               
               {/* Achievement Icons */}
-              <div className="absolute -top-4 left-0 right-0 flex justify-between items-center">
+              <div className="absolute -top-4 left-0 right-0 flex items-center">
                 {/* Last Unlocked Achievement */}
                 {lastUnlocked && (
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
                     <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center">
                       <span className="text-xl">{lastUnlocked.badge_icon}</span>
                     </div>
@@ -120,7 +125,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next Achievement */}
                 {nextMilestone && (
-                  <div className="flex flex-col items-center" style={{ position: 'absolute', right: '15%' }}>
+                  <div className="flex flex-col items-center absolute" style={{ right: '15%' }}>
                     <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center">
                       <span className="text-xl">🎁</span>
                     </div>
@@ -132,7 +137,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next-Next Achievement */}
                 {nextNextMilestone && (
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center absolute" style={{ right: '-16px' }}>
                     <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center">
                       <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                     </div>
