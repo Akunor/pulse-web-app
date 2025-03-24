@@ -198,7 +198,7 @@ async function processNotifications() {
       .select('*')
       .is('processed_at', null)
       .order('created_at', { ascending: true })
-      .limit(10);
+      .limit(20); // Increased from 10 to 20
 
     if (fetchError) {
       console.error('Error fetching notifications:', fetchError);
@@ -214,58 +214,67 @@ async function processNotifications() {
       });
     }
 
-    // Process each notification
-    for (const notification of notifications) {
-      try {
-        console.log(`Processing notification ${notification.id} for ${notification.email}...`);
-        
-        // Send email
-        console.log('Sending email...');
-        const emailContent = formatEmailContent(notification, webappUrl);
-        console.log('Email content prepared:', emailContent);
-        
-        await transporter.sendMail({
-          from: `"Pulse Fitness" <${process.env.GMAIL_USER}>`,
-          to: notification.email,
-          subject: notification.subject,
-          html: emailContent
-        });
-        console.log('Email sent successfully');
-
-        // Mark as processed
-        console.log('Marking notification as processed...');
-        const { error: updateError } = await supabase
-          .from('notification_queue')
-          .update({ 
-            processed_at: new Date().toISOString(),
-            error: null
-          })
-          .eq('id', notification.id);
-
-        if (updateError) {
-          console.error('Error updating notification status:', updateError);
-          throw updateError;
-        }
-        console.log('Notification marked as processed');
-
-        // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
-      } catch (error) {
-        console.error(`Error processing notification ${notification.id}:`, error);
-        
-        // Update notification with error
+    // Process notifications in parallel batches
+    const batchSize = 5; // Process 5 notifications at a time
+    for (let i = 0; i < notifications.length; i += batchSize) {
+      const batch = notifications.slice(i, i + batchSize);
+      console.log(`Processing batch ${i/batchSize + 1} of ${Math.ceil(notifications.length/batchSize)}`);
+      
+      // Process batch in parallel
+      await Promise.all(batch.map(async (notification) => {
         try {
-          await supabase
+          console.log(`Processing notification ${notification.id} for ${notification.email}...`);
+          
+          // Send email
+          console.log('Sending email...');
+          const emailContent = formatEmailContent(notification, webappUrl);
+          console.log('Email content prepared:', emailContent);
+          
+          await transporter.sendMail({
+            from: `"Pulse Fitness" <${process.env.GMAIL_USER}>`,
+            to: notification.email,
+            subject: notification.subject,
+            html: emailContent
+          });
+          console.log('Email sent successfully');
+
+          // Mark as processed
+          console.log('Marking notification as processed...');
+          const { error: updateError } = await supabase
             .from('notification_queue')
             .update({ 
               processed_at: new Date().toISOString(),
-              error: error.message
+              error: null
             })
             .eq('id', notification.id);
-          console.log('Error status recorded in database');
-        } catch (updateError) {
-          console.error('Error updating notification with error status:', updateError);
+
+          if (updateError) {
+            console.error('Error updating notification status:', updateError);
+            throw updateError;
+          }
+          console.log('Notification marked as processed');
+        } catch (error) {
+          console.error(`Error processing notification ${notification.id}:`, error);
+          
+          // Update notification with error
+          try {
+            await supabase
+              .from('notification_queue')
+              .update({ 
+                processed_at: new Date().toISOString(),
+                error: error.message
+              })
+              .eq('id', notification.id);
+            console.log('Error status recorded in database');
+          } catch (updateError) {
+            console.error('Error updating notification with error status:', updateError);
+          }
         }
+      }));
+
+      // Add a small delay between batches to avoid rate limiting
+      if (i + batchSize < notifications.length) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
