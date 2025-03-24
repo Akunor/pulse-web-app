@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { Trophy, Target, Award } from 'lucide-react';
+import { Trophy, Target, Award, Lock } from 'lucide-react';
 
 interface Achievement {
   type: string;
@@ -22,6 +22,8 @@ export function Achievements({ currentPulse }: AchievementsProps) {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [nextMilestone, setNextMilestone] = useState<Achievement | null>(null);
+  const [nextNextMilestone, setNextNextMilestone] = useState<Achievement | null>(null);
+  const [lastUnlocked, setLastUnlocked] = useState<Achievement | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -50,12 +52,13 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
       setAchievements(achievementsWithStatus);
 
-      // Find next milestone
-      const next = achievementsWithStatus.find(a => 
-        !a.unlocked && 
-        a.required_pulse > currentPulse
-      );
-      setNextMilestone(next || null);
+      // Find next milestone and next-next milestone
+      const unlockedAchievements = achievementsWithStatus.filter(a => a.unlocked);
+      const lockedAchievements = achievementsWithStatus.filter(a => !a.unlocked);
+      
+      setLastUnlocked(unlockedAchievements[unlockedAchievements.length - 1] || null);
+      setNextMilestone(lockedAchievements[0] || null);
+      setNextNextMilestone(lockedAchievements[1] || null);
     }
   }
 
@@ -72,60 +75,115 @@ export function Achievements({ currentPulse }: AchievementsProps) {
           <div className="text-center">
             <p className="text-sm text-rose-600 dark:text-rose-400 font-semibold">Current Pulse</p>
             <p className="text-4xl font-bold text-rose-600 dark:text-rose-400">{currentPulse}</p>
-            {nextMilestone && (
-              <div className="mt-4">
-                <p className="text-sm text-rose-600 dark:text-rose-400">Next Milestone</p>
-                <p className="text-xl font-semibold text-rose-600 dark:text-rose-400">
-                  {nextMilestone.name} ({nextMilestone.required_pulse} Pulse)
-                </p>
-                <div className="mt-2 h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden">
+            
+            {/* Achievement Progress Bar */}
+            <div className="mt-8 relative">
+              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
+                  style={{ 
+                    width: nextMilestone 
+                      ? `${Math.min((currentPulse / nextMilestone.required_pulse) * 85, 85)}%` 
+                      : '100%'
+                  }}
+                />
+                {/* Dashed line for gap to locked achievement */}
+                {nextMilestone && nextNextMilestone && (
                   <div 
-                    className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
+                    className="h-full border-r-2 border-dashed border-rose-300 dark:border-slate-500"
                     style={{ 
-                      width: `${Math.min((currentPulse / nextMilestone.required_pulse) * 100, 100)}%` 
+                      position: 'absolute',
+                      left: '85%',
+                      top: 0,
+                      bottom: 0
                     }}
                   />
-                </div>
-                <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
-                  {nextMilestone.required_pulse - currentPulse} Pulse to go!
-                </p>
+                )}
               </div>
+              
+              {/* Achievement Icons */}
+              <div className="absolute -top-4 left-0 right-0 flex justify-between items-center">
+                {/* Last Unlocked Achievement */}
+                {lastUnlocked && (
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center">
+                      <span className="text-xl">{lastUnlocked.badge_icon}</span>
+                    </div>
+                    <span className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                      {lastUnlocked.name}
+                    </span>
+                  </div>
+                )}
+
+                {/* Next Achievement */}
+                {nextMilestone && (
+                  <div className="flex flex-col items-center" style={{ position: 'absolute', right: '15%' }}>
+                    <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center">
+                      <span className="text-xl">🎁</span>
+                    </div>
+                    <span className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                      {nextMilestone.name}
+                    </span>
+                  </div>
+                )}
+
+                {/* Next-Next Achievement */}
+                {nextNextMilestone && (
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center">
+                      <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <span className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                      ???
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Progress Text */}
+            {nextMilestone && (
+              <p className="text-sm text-rose-600 dark:text-rose-400 mt-6">
+                {nextMilestone.required_pulse - currentPulse} Pulse to unlock {nextMilestone.name}!
+              </p>
             )}
           </div>
         </div>
 
-        {/* Achievements Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {achievements.map((achievement) => (
-            <div
-              key={achievement.type}
-              className={`bg-white dark:bg-slate-700 rounded-lg p-6 border-2 ${
-                achievement.unlocked
-                  ? `border-${achievement.color_theme.split('-')[1]} dark:border-${achievement.color_theme.split('-')[1]}`
-                  : 'border-slate-200 dark:border-slate-600'
-              }`}
-            >
-              <div className="flex items-center space-x-3 mb-3">
-                <span className="text-2xl">{achievement.badge_icon}</span>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                  {achievement.name}
-                </h3>
+        {/* Unlocked Achievements */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Your Achievements</h3>
+          {achievements
+            .filter(a => a.unlocked)
+            .sort((a, b) => b.required_pulse - a.required_pulse)
+            .map((achievement) => (
+              <div
+                key={achievement.type}
+                className="bg-white dark:bg-slate-700 rounded-lg p-6 border-2 border-rose-500 dark:border-rose-400"
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-rose-100 dark:bg-slate-600 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">{achievement.badge_icon}</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
+                      {achievement.name}
+                    </h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {achievement.description}
+                    </p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                        {achievement.required_pulse} Pulse
+                      </span>
+                      <span className="text-sm text-green-600 dark:text-green-400">
+                        Unlocked {new Date(achievement.unlocked_at!).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                {achievement.description}
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                  {achievement.required_pulse} Pulse
-                </span>
-                {achievement.unlocked && (
-                  <span className="text-sm text-green-600 dark:text-green-400">
-                    Unlocked {new Date(achievement.unlocked_at!).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
