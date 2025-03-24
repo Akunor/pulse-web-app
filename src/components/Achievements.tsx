@@ -82,7 +82,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
             {/* Achievement Progress Bar */}
             <div className="mt-8 relative">
               {/* Main progress bar - only extends to giftbox */}
-              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden" style={{ width: '82%' }}>
+              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden" style={{ width: '80%' }}>
                 <div 
                   className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
                   style={{ 
@@ -98,7 +98,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 <div 
                   className="absolute top-0 h-2 flex items-center"
                   style={{ 
-                    left: '82%',
+                    left: '80%',
                     right: '15%'
                   }}
                 >
@@ -126,7 +126,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
                 {/* Next Achievement */}
                 {nextMilestone && (
-                  <div className="flex flex-col items-center absolute" style={{ right: '18%' }}>
+                  <div className="flex flex-col items-center absolute" style={{ right: '20%' }}>
                     <div className="w-8 h-8 bg-white dark:bg-slate-800 rounded-full border-2 border-rose-500 dark:border-rose-400 flex items-center justify-center shadow-md">
                       <span className="text-xl">🎁</span>
                     </div>
@@ -149,16 +149,16 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 {lastUnlocked && (
                   <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
                     <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                      {lastUnlocked.name}
+                      {lastUnlocked.required_pulse}
                     </span>
                   </div>
                 )}
 
                 {/* Next Achievement Label */}
                 {nextMilestone && (
-                  <div className="flex flex-col items-center absolute" style={{ right: '18%' }}>
+                  <div className="flex flex-col items-center absolute" style={{ right: '20%' }}>
                     <span className="text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                      {nextMilestone.name}
+                      {nextMilestone.required_pulse}
                     </span>
                   </div>
                 )}
@@ -167,7 +167,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                 {nextNextMilestone && (
                   <div className="flex flex-col items-center absolute" style={{ right: '-16px' }}>
                     <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                      ???
+                      {nextNextMilestone.required_pulse}
                     </span>
                   </div>
                 )}
@@ -176,7 +176,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
             {/* Progress Text */}
             {nextMilestone && (
-              <p className="text-sm text-rose-600 dark:text-rose-400 mt-6">
+              <p className="text-sm text-rose-600 dark:text-rose-400 mt-8">
                 {nextMilestone.required_pulse - currentPulse} Pulse to unlock {nextMilestone.name}!
               </p>
             )}
