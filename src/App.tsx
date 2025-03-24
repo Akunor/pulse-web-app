@@ -13,7 +13,8 @@ import {
   X,
   Activity,
   Copy,
-  Check
+  Check,
+  Award
 } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -375,6 +376,12 @@ function AppContent() {
                       <span className="text-xs">Progress</span>
                     </>
                   )}
+                  {activeTab === 'achievements' && (
+                    <>
+                      <Award className="w-6 h-6" />
+                      <span className="text-xs">Achievements</span>
+                    </>
+                  )}
                   {activeTab === 'leaderboard' && (
                     <>
                       <Trophy className="w-6 h-6" />
@@ -447,6 +454,16 @@ function AppContent() {
                   </button>
                   <button 
                     onClick={() => {
+                      setActiveTab('achievements');
+                      setShowNavMenu(false);
+                    }}
+                    className={`p-2 flex flex-col items-center ${activeTab === 'achievements' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+                  >
+                    <Award className="w-6 h-6" />
+                    <span className="text-xs">Achievements</span>
+                  </button>
+                  <button 
+                    onClick={() => {
                       setActiveTab('leaderboard');
                       setShowNavMenu(false);
                     }}
@@ -503,6 +520,13 @@ function AppContent() {
                 >
                   <LineChart className="w-6 h-6" />
                   <span className="text-xs">Progress</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('achievements')}
+                  className={`p-2 flex flex-col items-center ${activeTab === 'achievements' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
+                >
+                  <Award className="w-6 h-6" />
+                  <span className="text-xs">Achievements</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('leaderboard')}
