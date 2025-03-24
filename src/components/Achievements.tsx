@@ -99,14 +99,14 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                   className="absolute top-0 h-2 flex items-center"
                   style={{ 
                     left: '80%',
-                    right: '15%'
+                    right: '-16px'
                   }}
                 >
                   <div className="w-full flex items-center justify-between">
                     {[...Array(6)].map((_, i) => (
                       <div
                         key={i}
-                        className="h-2 w-1.5 bg-rose-200 dark:bg-slate-600 rounded-full"
+                        className="h-2 w-3 bg-rose-200 dark:bg-slate-600 rounded-full"
                       />
                     ))}
                   </div>
