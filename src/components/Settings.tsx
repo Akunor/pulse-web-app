@@ -34,29 +34,25 @@ export function Settings() {
       <div className="space-y-6">
         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
           <div className="flex items-center space-x-3">
-            {theme === 'dark' ? (
-              <Sun className="w-5 h-5 text-rose-500" />
-            ) : (
-              <Moon className="w-5 h-5 text-rose-500" />
-            )}
+            <Moon className="w-5 h-5 text-rose-500" />
             <div>
               <h3 className="font-semibold text-slate-900 dark:text-white">
-                {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                Dark Mode
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Switch to {theme === 'dark' ? 'light' : 'dark'} mode
+                {theme === 'dark' ? 'Enabled' : 'Disabled'}
               </p>
             </div>
           </div>
           <button
             onClick={toggleTheme}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              theme === 'dark' ? 'bg-slate-300 dark:bg-slate-600' : 'bg-rose-500'
+              theme === 'dark' ? 'bg-rose-500' : 'bg-slate-300 dark:bg-slate-600'
             }`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                theme === 'dark' ? 'translate-x-1' : 'translate-x-6'
+                theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>
