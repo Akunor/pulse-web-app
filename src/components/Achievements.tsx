@@ -54,7 +54,10 @@ export function Achievements({ currentPulse }: AchievementsProps) {
 
       // Find next milestone and next-next milestone
       const unlockedAchievements = achievementsWithStatus.filter(a => a.unlocked);
-      const lockedAchievements = achievementsWithStatus.filter(a => !a.unlocked);
+      const lockedAchievements = achievementsWithStatus.filter(a => 
+        !a.unlocked && 
+        a.required_pulse > currentPulse
+      );
       
       setLastUnlocked(unlockedAchievements[unlockedAchievements.length - 1] || null);
       setNextMilestone(lockedAchievements[0] || null);
