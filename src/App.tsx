@@ -275,17 +275,48 @@ function AppContent() {
             {/* Mobile Navigation */}
             <div className="md:hidden fixed bottom-0 left-0 right-0 z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 px-4 py-2">
               <div className="flex justify-between items-center">
-                <button 
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`p-2 flex flex-col items-center ${activeTab === 'dashboard' ? 'text-rose-500' : 'text-slate-600 dark:text-slate-400'}`}
-                >
-                  <Logo 
-                    className="w-6 h-6" 
-                    variant="small" 
-                    color={activeTab === 'dashboard' ? 'colored' : 'grey'}
-                  />
-                  <span className="text-xs">Pulse</span>
-                </button>
+                <div className="p-2 flex flex-col items-center text-rose-500">
+                  {activeTab === 'dashboard' && (
+                    <>
+                      <Logo 
+                        className="w-6 h-6" 
+                        variant="small" 
+                        color="colored"
+                      />
+                      <span className="text-xs">Pulse</span>
+                    </>
+                  )}
+                  {activeTab === 'workouts' && (
+                    <>
+                      <Dumbbell className="w-6 h-6" />
+                      <span className="text-xs">Workouts</span>
+                    </>
+                  )}
+                  {activeTab === 'calendar' && (
+                    <>
+                      <CalendarIcon className="w-6 h-6" />
+                      <span className="text-xs">Calendar</span>
+                    </>
+                  )}
+                  {activeTab === 'progress' && (
+                    <>
+                      <LineChart className="w-6 h-6" />
+                      <span className="text-xs">Progress</span>
+                    </>
+                  )}
+                  {activeTab === 'leaderboard' && (
+                    <>
+                      <Trophy className="w-6 h-6" />
+                      <span className="text-xs">Leaderboard</span>
+                    </>
+                  )}
+                  {activeTab === 'settings' && (
+                    <>
+                      <SettingsIcon className="w-6 h-6" />
+                      <span className="text-xs">Settings</span>
+                    </>
+                  )}
+                </div>
                 <button 
                   onClick={() => setShowNavMenu(!showNavMenu)}
                   className="p-2 text-slate-600 dark:text-slate-400"
