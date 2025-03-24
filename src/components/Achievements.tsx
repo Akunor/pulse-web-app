@@ -81,39 +81,40 @@ export function Achievements({ currentPulse }: AchievementsProps) {
             
             {/* Achievement Progress Bar */}
             <div className="mt-8 relative">
-              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden">
-                {/* Main progress fill - only goes up to next milestone */}
+              {/* Main progress bar - only extends to giftbox */}
+              <div className="h-2 bg-rose-200 dark:bg-slate-600 rounded-full overflow-hidden" style={{ width: '85%' }}>
                 <div 
                   className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
                   style={{ 
                     width: nextMilestone 
-                      ? `${Math.min((currentPulse / nextMilestone.required_pulse) * 85, 85)}%` 
+                      ? `${Math.min((currentPulse / nextMilestone.required_pulse) * 100, 100)}%` 
                       : '100%'
                   }}
                 />
-                {/* Dashed segments for gap to locked achievement */}
-                {nextMilestone && nextNextMilestone && (
-                  <div 
-                    className="absolute top-0 bottom-0 flex items-center"
-                    style={{ 
-                      left: '85%',
-                      right: '15%'
-                    }}
-                  >
-                    <div className="w-full h-full flex items-center justify-between">
-                      {[...Array(6)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="h-full w-1 bg-rose-500 dark:bg-rose-400 rounded-full"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
+
+              {/* Dashed line between giftbox and lock */}
+              {nextMilestone && nextNextMilestone && (
+                <div 
+                  className="absolute top-0 h-2 flex items-center"
+                  style={{ 
+                    left: '85%',
+                    right: '15%'
+                  }}
+                >
+                  <div className="w-full flex items-center justify-between">
+                    {[...Array(6)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-2 w-1 bg-rose-200 dark:bg-slate-600 rounded-full"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
               
               {/* Achievement Icons - positioned over the bar */}
-              <div className="absolute -top-4 left-0 right-0 flex items-center">
+              <div className="absolute -top-2 left-0 right-0 flex items-center">
                 {/* Last Unlocked Achievement */}
                 {lastUnlocked && (
                   <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
