@@ -127,9 +127,10 @@ function AppContent() {
       .eq('user_id', user?.id);
 
     if (metadata) {
-      // Find the next milestone that the user hasn't unlocked yet
+      // Find the next milestone that the user hasn't unlocked yet and hasn't surpassed
       const next = metadata.find(meta => 
-        !unlocked?.some(u => u.milestone === meta.required_pulse)
+        !unlocked?.some(u => u.milestone === meta.required_pulse) &&
+        meta.required_pulse > profile.pulse_level
       );
       
       if (next) {
@@ -138,7 +139,7 @@ function AppContent() {
           required_pulse: next.required_pulse
         });
       } else {
-        // If all milestones are unlocked, set to null
+        // If all milestones are unlocked or surpassed, set to null
         setNextMilestone(null);
       }
     }

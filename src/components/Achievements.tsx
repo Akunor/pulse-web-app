@@ -51,7 +51,10 @@ export function Achievements({ currentPulse }: AchievementsProps) {
       setAchievements(achievementsWithStatus);
 
       // Find next milestone
-      const next = achievementsWithStatus.find(a => !a.unlocked);
+      const next = achievementsWithStatus.find(a => 
+        !a.unlocked && 
+        a.required_pulse > currentPulse
+      );
       setNextMilestone(next || null);
     }
   }
