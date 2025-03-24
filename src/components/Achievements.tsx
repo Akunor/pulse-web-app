@@ -14,29 +14,21 @@ interface Achievement {
   unlocked_at?: string;
 }
 
-export function Achievements() {
+interface AchievementsProps {
+  currentPulse: number;
+}
+
+export function Achievements({ currentPulse }: AchievementsProps) {
   const { user } = useAuth();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [currentPulse, setCurrentPulse] = useState(0);
   const [nextMilestone, setNextMilestone] = useState<Achievement | null>(null);
 
   useEffect(() => {
     if (!user) return;
     loadAchievements();
-  }, [user]);
+  }, [user, currentPulse]);
 
   async function loadAchievements() {
-    // Get user's current pulse
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('pulse_level')
-      .eq('id', user?.id)
-      .single();
-
-    if (profile) {
-      setCurrentPulse(profile.pulse_level);
-    }
-
     // Get all achievement metadata
     const { data: metadata } = await supabase
       .from('achievement_metadata')
