@@ -152,15 +152,29 @@ export function Progress() {
     // Calculate average rest days per week
     const averageRestDaysPerWeek = weeks > 0 ? restDays.length / weeks : 0;
 
+    // Helper function to calculate duration in minutes
+    const calculateDurationInMinutes = (duration: string) => {
+      if (!duration) return 0;
+      try {
+        // If duration is in HH:mm:ss format
+        const [hours, minutes, seconds] = duration.split(':').map(Number);
+        return (hours * 60) + minutes + (seconds / 60);
+      } catch (error) {
+        // If duration is just a number (minutes)
+        const minutes = Number(duration);
+        return isNaN(minutes) ? 0 : minutes;
+      }
+    };
+
     setStats({
       totalWorkouts,
       totalCalories,
-      totalMinutes,
+      totalMinutes: workouts.reduce((sum, w) => sum + calculateDurationInMinutes(w.duration), 0),
       averagePulse: Math.round(totalWorkouts * 5),
       weeklyStats: {
         workouts: weeklyWorkouts.length,
         averageDuration: weeklyWorkouts.length > 0 
-          ? weeklyWorkouts.reduce((sum, w) => sum + new Date(w.duration).getMinutes(), 0) / weeklyWorkouts.length 
+          ? weeklyWorkouts.reduce((sum, w) => sum + calculateDurationInMinutes(w.duration), 0) / weeklyWorkouts.length 
           : 0,
         restDays: weeklyRestDays.length,
         streak: weeklyWorkouts.length > 0 ? 1 : 0
@@ -168,7 +182,7 @@ export function Progress() {
       monthlyStats: {
         workouts: monthlyWorkouts.length,
         averageDuration: monthlyWorkouts.length > 0 
-          ? monthlyWorkouts.reduce((sum, w) => sum + new Date(w.duration).getMinutes(), 0) / monthlyWorkouts.length 
+          ? monthlyWorkouts.reduce((sum, w) => sum + calculateDurationInMinutes(w.duration), 0) / monthlyWorkouts.length 
           : 0,
         restDays: monthlyRestDays.length,
         streak: monthlyWorkouts.length > 0 ? 1 : 0
