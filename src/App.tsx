@@ -34,6 +34,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import LeaderboardPage from './components/LeaderboardPage';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'react-hot-toast';
+import { Achievements } from './components/Achievements';
 
 function ErrorFallback({ error }: { error: Error }) {
   return (
@@ -63,6 +64,7 @@ function AppContent() {
     lastWorkout: null,
     restDayUsed: false
   });
+  const [nextMilestone, setNextMilestone] = useState<{ name: string; required_pulse: number } | null>(null);
   const { user, signOut } = useAuth();
   
   // Add effect to handle auth modal flag
@@ -78,6 +80,11 @@ function AppContent() {
     if (user) {
       loadUserProfile();
     }
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadNextMilestone();
   }, [user]);
 
   async function loadUserProfile() {
@@ -97,6 +104,40 @@ function AppContent() {
       lastWorkout: data.last_workout_at,
       restDayUsed: data.rest_day_used || false
     });
+  }
+
+  async function loadNextMilestone() {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('pulse_level')
+      .eq('id', user?.id)
+      .single();
+
+    if (!profile) return;
+
+    const { data: metadata } = await supabase
+      .from('achievement_metadata')
+      .select('*')
+      .order('required_pulse', { ascending: true });
+
+    const { data: unlocked } = await supabase
+      .from('achievements')
+      .select('milestone')
+      .eq('user_id', user?.id);
+
+    if (metadata) {
+      const next = metadata.find(meta => 
+        !unlocked?.some(u => u.milestone === meta.required_pulse) &&
+        meta.required_pulse > profile.pulse_level
+      );
+      
+      if (next) {
+        setNextMilestone({
+          name: next.name,
+          required_pulse: next.required_pulse
+        });
+      }
+    }
   }
 
   const handleSignOut = async () => {
@@ -143,6 +184,8 @@ function AppContent() {
         return <Settings />;
       case 'leaderboard':
         return <LeaderboardPage />;
+      case 'achievements':
+        return <Achievements />;
       default:
         return (
           <div className="max-w-2xl mx-auto">
@@ -194,6 +237,34 @@ function AppContent() {
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Last 7 Days</h3>
                   <WeeklyActivity />
                 </div>
+
+                {/* Progress to Next Milestone */}
+                {nextMilestone && (
+                  <div className="w-full max-w-md mt-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-slate-600 dark:text-slate-400">
+                        Progress to {nextMilestone.name}
+                      </span>
+                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                        {userProfile.pulseLevel}/{nextMilestone.required_pulse}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-rose-500 dark:bg-rose-400 transition-all duration-500"
+                        style={{ 
+                          width: `${Math.min((userProfile.pulseLevel / nextMilestone.required_pulse) * 100, 100)}%` 
+                        }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('achievements')}
+                      className="mt-2 text-sm text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
+                    >
+                      View all achievements →
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
