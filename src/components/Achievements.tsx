@@ -106,7 +106,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
                     {[...Array(6)].map((_, i) => (
                       <div
                         key={i}
-                        className="h-2 w-3 bg-rose-200 dark:bg-slate-600 rounded-full"
+                        className="h-2 w-5 bg-rose-200 dark:bg-slate-600 rounded-full"
                       />
                     ))}
                   </div>
