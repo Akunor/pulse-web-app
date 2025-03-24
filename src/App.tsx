@@ -31,7 +31,7 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import LeaderboardPage from './pages/LeaderboardPage';
+import LeaderboardPage from './components/LeaderboardPage';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Toaster } from 'react-hot-toast';
 
