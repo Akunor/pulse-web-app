@@ -114,7 +114,7 @@ export function Achievements({ currentPulse }: AchievementsProps) {
               )}
               
               {/* Achievement Icons - positioned over the bar */}
-              <div className="absolute -top-0 left-0 right-0 flex items-center">
+              <div className="absolute -top-4 left-0 right-0 flex items-center">
                 {/* Last Unlocked Achievement */}
                 {lastUnlocked && (
                   <div className="flex flex-col items-center" style={{ marginLeft: '-16px' }}>
