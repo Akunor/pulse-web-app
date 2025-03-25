@@ -6,12 +6,15 @@
 ✓ Password reset function not working
 ✓ Leaderboard not displaying properly
 ✓ Workouts on main page and on dedicated page need to be separate components.
+* Positioning of labels under milestones bar
+- Design of dashed progress section needs optimising for smaller screens
 
 ## Planned Features
 
 ### Phase 1 - Core Exercise Features
 - Mobile app port?
-- Personal progress bar/rewards for reaching Pulse milestones.
+✓ Personal progress bar/rewards for reaching Pulse milestones.
+- Milestones notifications/congrats emails
 ✓ Pulse leaderboard? (Global and friends only)
 - More detailed accounts, usernames, locations, profile pics etc.
 - Exercise tracking with minimum requirements for pulse updates
